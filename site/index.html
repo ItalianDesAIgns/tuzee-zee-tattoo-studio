@@ -6,13 +6,16 @@
 <title>TUZEE Tattoo Studio · Mandala, Ornamental & Oriental Tattoos in Pyeongtaek</title>
 <meta name="description" content="Custom mandala, sacred geometry, ornamental and oriental tattoos, drawn by hand by Zee. Private tattoo studio in Paengseong-eup, Pyeongtaek. English and Korean.">
 <meta name="theme-color" content="#050506">
+<link rel="canonical" href="https://tuzee-zee-tattoo-studio.vercel.app/">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://tuzee-zee-tattoo-studio.vercel.app/">
 <meta property="og:title" content="TUZEE Tattoo Studio · Mandala, Ornamental & Oriental Tattoos in Pyeongtaek">
 <meta property="og:description" content="Custom mandala, sacred geometry, ornamental and oriental tattoos, drawn by hand by Zee. Private tattoo studio in Paengseong-eup, Pyeongtaek. English and Korean.">
-<meta property="og:image" content="media/og.jpg">
+<meta property="og:image" content="https://tuzee-zee-tattoo-studio.vercel.app/media/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tuzee-zee-tattoo-studio.vercel.app/media/og.jpg">
 <link rel="icon" href="media/favicon.ico" sizes="any">
 <link rel="icon" href="media/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="media/apple-touch-icon.png">
@@ -34,15 +37,16 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800&display=swap" media="print" onload="this.media='all'">
 <script defer src="js/app.js"></script>
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Unbounded:wght@600;700;800;900&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800&display=swap"></noscript>
-<link rel="preload" as="image" href="media/hero-poster-m.webp" media="(max-width: 700px)">
-<link rel="preload" as="image" href="media/hero-poster.webp" media="(min-width: 701px)">
+<link rel="preload" as="image" href="media/hero-poster-m.webp" media="(max-width: 700px)" fetchpriority="high">
+<link rel="preload" as="image" href="media/hero-poster.webp" media="(min-width: 701px)" fetchpriority="high">
 <link rel="stylesheet" href="css/styles.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "TattooParlor",
   "name": "TUZEE Tattoo Studio",
-  "image": "media/og.jpg",
+  "url": "https://tuzee-zee-tattoo-studio.vercel.app/",
+  "image": "https://tuzee-zee-tattoo-studio.vercel.app/media/og.jpg",
   "address": { "@type": "PostalAddress", "streetAddress": "52 Anjeongshopping-ro, Capitorium #114", "addressLocality": "Paengseong-eup, Pyeongtaek-si", "addressRegion": "Gyeonggi-do", "postalCode": "17983", "addressCountry": "KR" },
   "geo": { "@type": "GeoCoordinates", "latitude": 36.961785, "longitude": 127.04803 },
   "sameAs": ["https://www.instagram.com/tuzee_tattoo/", "https://www.tiktok.com/@tuzeetattoo", "https://www.facebook.com/kyungeun.chi.5", "https://open.kakao.com/o/siUk2cie", "https://place.map.kakao.com/2118907749"],
@@ -63,6 +67,7 @@
       <a href="#work" data-i18n="navWork">Work</a>
       <a href="#designs" data-i18n="navDesigns">Designs</a>
       <a href="#zee" data-i18n="navZee">Zee</a>
+      <a href="#hygiene" data-i18n="navHygiene">Hygiene</a>
       <a href="#visit" data-i18n="navVisit">Visit</a>
     </nav>
     <div class="header-actions">
@@ -166,6 +171,7 @@
       </div>
       <div class="filters" id="workFilters" role="group" aria-label="Filter by style"></div>
       <div class="gallery" id="workGrid"></div>
+      <div class="more-row"><button class="btn" type="button" id="workMore"></button></div>
     </div>
   </section>
 
@@ -181,6 +187,7 @@
         <button type="button" data-seg="mockup" aria-pressed="false"><span data-i18n="segBody">On the body</span> <sup>26</sup></button>
       </div>
       <div class="gallery" id="designGrid"></div>
+      <div class="more-row"><button class="btn" type="button" id="designMore"></button></div>
     </div>
   </section>
 
@@ -199,6 +206,39 @@
           <li><span data-i18n="fStudioK">Studio</span><span data-i18n="fStudioV">Private studio. Walk-ins welcome.</span></li>
         </ul>
         <ul class="socials" data-socials></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05.5 COMPACT HYGIENE & TOOL SAFETY STRIP -->
+  <section class="section flush-top" id="hygiene" aria-labelledby="hygiene-title">
+    <div class="wrap">
+      <div class="hygiene-strip reveal">
+        <div class="hygiene-head">
+          <div>
+            <p class="eyebrow" data-i18n="hygEyebrow">Hygiene &amp; Tool Safety</p>
+            <h2 class="h-m" id="hygiene-title" data-i18n="hygTitle">Single-use sterile. Sealed before you sit.</h2>
+          </div>
+          <button class="btn btn-sm" type="button" id="openAftercare" data-i18n="aftercareBtn">30-day aftercare &amp; safety guide</button>
+        </div>
+        <ul class="hygiene-pillars">
+          <li>
+            <strong data-i18n="hygP1K">Single-use cartridges</strong>
+            <span data-i18n="hygP1V">Individually sterilized membrane cartridges unsealed from the blister pack in front of you.</span>
+          </li>
+          <li>
+            <strong data-i18n="hygP2K">Full barrier wrap</strong>
+            <span data-i18n="hygP2V">Machine, grip, armrest, lamp, and bed wrapped in fresh disposable barrier film for every client.</span>
+          </li>
+          <li>
+            <strong data-i18n="hygP3K">Sterile caps &amp; sharps</strong>
+            <span data-i18n="hygP3V">Single-use ink caps dispensed before setup; used needles ejected straight into a sealed sharps container.</span>
+          </li>
+          <li>
+            <strong data-i18n="hygP4K">Standing stencil fit</strong>
+            <span data-i18n="hygP4V">Spine and geometric axes mapped while you stand naturally on level ground before lying on the bed.</span>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
@@ -293,6 +333,7 @@
         <ul>
           <li><a href="#work" data-i18n="navWork">Work</a></li>
           <li><a href="#designs" data-i18n="navDesigns">Designs</a></li>
+          <li><a href="#hygiene" data-i18n="navHygiene">Hygiene</a></li>
           <li><a href="#book" data-i18n="navBook">Book</a></li>
         </ul>
       </div>
@@ -319,6 +360,7 @@
       <a href="#work" data-i18n="navWork">Work</a>
       <a href="#designs" data-i18n="navDesigns">Designs</a>
       <a href="#zee" data-i18n="navZee">Zee</a>
+      <a href="#hygiene" data-i18n="navHygiene">Hygiene</a>
       <a href="#visit" data-i18n="navVisit">Visit</a>
       <a href="#book" class="menu-book" data-i18n="navBook">Book</a>
     </nav>
@@ -356,8 +398,39 @@
   <button class="btn taxi-close" type="button" data-close data-i18n="close">Close</button>
 </dialog>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="aftercare" id="aftercare" aria-labelledby="ac-title">
+  <div class="ac-card">
+    <div class="ac-top">
+      <div>
+        <p class="eyebrow" data-i18n="acEyebrow">Hygiene, Tool Safety &amp; 30-Day Aftercare</p>
+        <h2 class="h-m" id="ac-title" data-i18n="acTitle">How we protect your skin in the chair and for 30 days after</h2>
+      </div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="ac-grid">
+      <div>
+        <h3 class="ac-sub" data-i18n="acCol1">30-Day Dermal Healing Timeline</h3>
+        <ol class="steps ac-steps">
+          <li><div><h4 data-i18n="hygS1T">Days 1–4 · Breathable dermal film</h4><p data-i18n="hygS1D">A waterproof, breathable second-skin film is applied before you leave to lock in natural healing and block friction or dust.</p></div></li>
+          <li><div><h4 data-i18n="hygS2T">Days 4–7 · Warm-water peel &amp; gentle wash</h4><p data-i18n="hygS2D">Peel the film slowly under warm running shower water, wash gently with fragrance-free soap, pat dry with clean paper towel, and apply a thin layer of ointment.</p></div></li>
+          <li><div><h4 data-i18n="hygS3T">Days 8–21 · Natural flaking (no picking or soaking)</h4><p data-i18n="hygS3D">Fine line and dotwork skin flakes lightly like sunburn. Never scratch or pick, and avoid baths, pools, saunas, or heavy sweat until settled.</p></div></li>
+          <li><div><h4 data-i18n="hygS4T">Day 30+ · Broad-spectrum SPF 50+</h4><p data-i18n="hygS4D">Once the skin fully regenerates at week 4, apply SPF 50+ in direct sun so fine lines and blackwork stay crisp for decades.</p></div></li>
+        </ol>
+      </div>
+      <div>
+        <h3 class="ac-sub" data-i18n="acCol2">Anatomical Stencil &amp; Tool Calibration</h3>
+        <ul class="facts ac-facts">
+          <li><span data-i18n="acZ1K">Spine &amp; back</span><span data-i18n="acZ1V">Lying face-down twists the spine by 4–9 mm. All spine and back stencils are mapped while you stand barefoot on level ground first.</span></li>
+          <li><span data-i18n="acZ2K">Shoulder &amp; blade</span><span data-i18n="acZ2V">Mandalas are anchored inside the stable center corridor with dotwork buffering across the shoulder blade so circles stay round in motion.</span></li>
+          <li><span data-i18n="acZ3K">Forearm wrap</span><span data-i18n="acZ3V">As your wrist turns, forearm bones cross in a spiral. Geometric sleeves are wrapped along that natural spiral so lines stay parallel.</span></li>
+          <li><span data-i18n="acZ4K">Elbow &amp; knee</span><span data-i18n="acZ4V">Joint skin stretches over 35% when bent. Negative-space framing and layered dotwork heal evenly across creases without ink dropout.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</dialog>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 </body>
 </html>
