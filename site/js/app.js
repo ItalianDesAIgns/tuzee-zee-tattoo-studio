@@ -78,8 +78,8 @@
     ['leg', 'Leg / calf', '다리 / 종아리'], ['thigh', 'Thigh', '허벅지'], ['hand-neck', 'Hand / neck / behind ear', '손 / 목 / 귀 뒤'], ['unsure', 'Not sure yet', '아직 모르겠어요'],
   ];
   const SIZES = [
-    ['s', 'Small · under 10 cm / 4 in', '작게 · 10cm 이하'], ['m', 'Medium · 10–20 cm / 4–8 in', '중간 · 10–20cm'],
-    ['l', 'Large · 20 cm+ / 8 in+', '크게 · 20cm 이상'], ['xl', 'Sleeve or back piece', '슬리브 또는 등 전체'],
+    ['s', 'Small · under 10 cm / 4 in', '작게 · 10cm / 4in 이하'], ['m', 'Medium · 10–20 cm / 4–8 in', '중간 · 10–20cm / 4–8in'],
+    ['l', 'Large · 20 cm+ / 8 in+', '크게 · 20cm / 8in 이상'], ['xl', 'Sleeve or back piece', '슬리브 또는 등 전체'],
   ];
 
   const T = {
@@ -88,39 +88,56 @@
       title: 'TUZEE Tattoo Studio · Mandala, Ornamental & Oriental Tattoos in Pyeongtaek',
       desc: 'Custom mandala, sacred geometry, ornamental and oriental tattoos, drawn by hand by Zee. Private tattoo studio in Paengseong-eup, Pyeongtaek. English and Korean.',
       motionPause: 'Pause motion', motionPlay: 'Play motion', menuOpen: 'Menu', menuClose: 'Close', saveTile: 'Save to request', openTile: 'Open',
-      brandSub: 'Tattoo Studio', navWork: 'Work', navDesigns: 'Designs', navZee: 'Zee', navVisit: 'Visit', navBook: 'Book',
-      heroClaim: 'I draw every tattoo by hand, for one body only: yours.', heroSign: 'Zee, artist',
+      brandSub: 'Tattoo Studio', navWork: 'Work', navDesigns: 'Designs', navZee: 'Zee', navHygiene: 'Hygiene', navVisit: 'Visit', navBook: 'Book',
+      heroClaim: 'Custom geometry and oriental work, drawn by hand for your body.', heroSign: 'Zee · Artist & Founder',
       heroEyebrow: 'Tattoo studio · Pyeongtaek, Korea', heroSr: ' Tattoo Studio',
-      heroLede: 'Mandalas, sacred geometry, ornamental and oriental work. Private studio in Pyeongtaek, tattooed to a high-BPM soundtrack.',
+      heroLede: 'Precision dotwork mandalas, ornamental spine pieces, and irezumi from a private studio in Pyeongtaek.',
       ctaStart: 'Start your design', ctaWork: 'See the work',
-      uvHint: 'Move to light it', uvEyebrow: '01 / Under UV', uvTitle: 'Lights down.',
-      uvLede: 'This drawing became Zee’s logo. Run your cursor or finger over it and see it the way her work is meant to be seen: lights down, blacklight on.',
-      uvAll: 'Light it all up', uvAllOff: 'Back to the torch',
-      cmpEyebrow: '02 / Fitted', cmpTitle: 'Drawn to fit you, not copied onto you.',
-      cmpLede: 'Every design is redrawn around the body that will wear it: the curve of a shoulder, the line of a spine. Drag the line to see a design next to the finished piece.',
+      uvHint: 'Move to trace the linework', uvEyebrow: '01 / Hand-Drawn Geometry', uvTitle: 'Eight-fold symmetry, drawn from a single center.',
+      uvLede: 'Every mandala starts on paper with a compass, ruler, and graphite—including the eight-point lotus that became the studio mark. Move the light across the drawing to inspect the dotwork and line weights up close.',
+      uvAll: 'Reveal full drawing', uvAllOff: 'Back to spotlight',
+      cmpEyebrow: '02 / Paper to Skin', cmpTitle: 'Shaped around collarbone, spine, and muscle.',
+      cmpLede: 'Flat paper distorts the moment it wraps around a shoulder or follows a spine. Zee redraws the proportions on your skin before tattooing so circles stay true when your arm moves. Drag the slider to compare the original drawing with the finished tattoo.',
       tagDrawing: 'Drawing', tagMockup: 'Mock-up', tagSession: 'Session 1', tagSkin: 'On skin', pairOf: 'Pair',
-      workEyebrow: '03 / The work', workTitle: 'Already living on someone.',
-      workLede: 'Open any piece to see it full size. Tap the plus to save it: saved pieces go straight into your request as references.',
-      all: 'All',
-      desEyebrow: '04 / Unreleased', desTitle: 'Still waiting for their body.',
-      desLede: 'Unreleased designs and body mock-ups. If one feels like yours, ask about it, or use it as the starting point for your own.',
-      segDrawings: 'Drawings', segBody: 'On the body',
-      zeeEyebrow: '05 / Zee · 지경은',
-      zeeTitle: 'Tattooing, traveling, dark high BPM.', p1: 'Drawn by hand', p2: 'Fitted to you', p3: 'Walk-ins welcome', p4: 'English · 한국어',
-      zeeLede: 'Zee builds tattoos the way a psytrance set is built: symmetry, repetition and detail that keeps opening up the longer you look. Mandalas and sacred geometry are home; oriental pieces, fine line and realism are part of the range.',
+      workEyebrow: '03 / Selected Work', workTitle: 'Finished work on skin.',
+      workLede: 'Sixty-seven pieces across sacred geometry, ornamental spine work, oriental irezumi, and fine-line botanicals. Tap any photo to inspect the linework full screen, or press + to attach it to your booking message as a reference.',
+      all: 'All', showAllWork: 'Show all {n} works', showLessWork: 'Show fewer works',
+      desEyebrow: '04 / Available Designs', desTitle: 'Original drawings ready to claim.',
+      desLede: 'Hand-drawn flash sheets and body-placement studies from Zee’s sketchbook. Claim a piece as drawn, or save one with + to adapt the scale and placement for your body.',
+      segDrawings: 'Drawings', segBody: 'On the body', showAllDes: 'Show all {n} pieces', showLessDes: 'Show fewer pieces',
+      zeeEyebrow: '05 / The Artist · 지경은',
+      zeeTitle: 'Fifteen years of ink across six countries.', p1: 'Drawn by hand', p2: 'Fitted to you', p3: 'Walk-ins welcome', p4: 'English · 한국어',
+      zeeLede: 'Tattooing since 2011 with guest residencies across Mexico, Brazil, Turkey, Japan, and Vietnam. Zee specializes in high-contrast dotwork mandalas, spine ornamentals, and large-scale oriental compositions from her private studio in Pyeongtaek.',
       fSinceK: 'Since', fSinceV: 'Tattooing since 2011', fGuestK: 'Guest spots', fGuestV: 'Mexico · Brazil · Turkey · Japan · Vietnam', fLangK: 'Languages', fStudioK: 'Studio', fStudioV: 'Private studio. Walk-ins welcome.', walkIn: 'Walk-ins welcome',
-      bookEyebrow: '06 / Book', bookTitle: 'Tell me what you want to carry.',
-      bookLede: 'No account, no long form. Build your message here, send it on the app you already use, and Zee answers it herself.',
+      hygEyebrow: 'Hygiene & Tool Safety', hygTitle: 'Unsealed in front of you. Wrapped fresh for every session.',
+      aftercareBtn: '30-day aftercare & safety guide',
+      hygP1K: 'Single-use cartridges', hygP1V: 'Individually sterilized membrane cartridges unsealed from the blister pack in front of you.',
+      hygP2K: 'Full barrier wrap', hygP2V: 'Machine, grip, armrest, lamp, and bed wrapped in fresh disposable barrier film for every client.',
+      hygP3K: 'Sterile caps & sharps', hygP3V: 'Single-use ink caps dispensed before setup; used needles ejected straight into a sealed sharps container.',
+      hygP4K: 'Standing stencil fit', hygP4V: 'Spine and geometric axes mapped while you stand naturally on level ground before lying on the bed.',
+      acEyebrow: 'Hygiene, Tool Safety & 30-Day Aftercare', acTitle: 'How we protect your skin in the chair and for 30 days after',
+      acCol1: '30-Day Dermal Healing Timeline', acCol2: 'Anatomical Stencil & Tool Calibration',
+      hygS1T: 'Days 1–4 · Breathable dermal film', hygS1D: 'A waterproof, breathable second-skin film is applied before you leave to lock in natural healing and block friction or dust.',
+      hygS2T: 'Days 4–7 · Warm-water peel & gentle wash', hygS2D: 'Peel the film slowly under warm running shower water, wash gently with fragrance-free soap, pat dry with clean paper towel, and apply a thin layer of ointment.',
+      hygS3T: 'Days 8–21 · Natural flaking (no picking or soaking)', hygS3D: 'Fine line and dotwork skin flakes lightly like sunburn. Never scratch or pick, and avoid baths, pools, saunas, or heavy sweat until settled.',
+      hygS4T: 'Day 30+ · Broad-spectrum SPF 50+', hygS4D: 'Once the skin fully regenerates at week 4, apply SPF 50+ in direct sun so fine lines and blackwork stay crisp for decades.',
+      acZ1K: 'Spine & back', acZ1V: 'Lying face-down twists the spine by 4–9 mm. All spine and back stencils are mapped while you stand barefoot on level ground first.',
+      acZ2K: 'Shoulder & blade', acZ2V: 'Mandalas are anchored inside the stable center corridor with dotwork buffering across the shoulder blade so circles stay round in motion.',
+      acZ3K: 'Forearm wrap', acZ3V: 'As your wrist turns, forearm bones cross in a spiral. Geometric sleeves are wrapped along that natural spiral so lines stay parallel.',
+      acZ4K: 'Elbow & knee', acZ4V: 'Joint skin stretches over 35% when bent. Negative-space framing and layered dotwork heal evenly across creases without ink dropout.',
+      bookEyebrow: '06 / Book a Session', bookTitle: 'Send your idea straight to Zee.',
+      bookLede: 'Describe your idea, pick the placement and size, and choose Instagram DM or KakaoTalk. Your message is formatted automatically with any reference pieces you saved above.',
       s1h: 'Send your idea', s1p: 'A few words, where on the body, rough size, and any references you saved.',
       s2h: 'Zee draws it', s2p: 'You get a custom design and a quote. Changes are part of the process.',
       s3h: 'Your session', s3p: 'A private session, then aftercare notes in English or Korean.',
       fIdea: 'Your idea', fIdeaPh: 'e.g. A lotus mandala on my upper back, black and grey, a bit like #021',
       fPlace: 'Placement', fSize: 'Rough size', fRefs: 'Saved references', fSend: 'Send it on',
-      refsEmpty: 'Nothing saved yet. Tap + on any tattoo or design.',
+      refsEmpty: 'Nothing saved yet. Tap + on any tattoo or design.', clearRefs: 'Clear all',
       fFine: 'Instagram and KakaoTalk can’t take a pre-written message, so we copy it for you: open the chat and paste.',
-      hintIg: 'Copy + open DM', hintKakao: 'Copy + open chat', hintEmail: 'Opens your mail',
-      copied: 'Message copied. Paste it in the chat.', copiedAddr: 'Korean address copied', saved: 'Saved to your request', unsaved: 'Removed from your request',
-      visitEyebrow: '07 / Visit', visitTitle: 'Walk in. Lights low, music loud.',
+      hintIg: 'Copy + open DM', hintKakao: 'Copy + open chat', hintEmail: 'Copy message',
+      copied: 'Message copied. Paste it in the chat.', emailPending: 'Message copied — paste in Instagram DM or KakaoTalk while email is being confirmed.',
+      copiedAddr: 'Korean address copied', saved: 'Saved to your request', unsaved: 'Removed from your request',
+      visitEyebrow: '07 / Studio & Directions', visitTitle: 'Private studio in Paengseong-eup, Pyeongtaek.',
       addrEn: 'Capitorium #114, 52 Anjeongshopping-ro, Paengseong-eup, Pyeongtaek',
       mapFallback: 'Open the studio on KakaoMap', toTop: 'Back to top', dNaver: 'Naver Map', dKakao: 'KakaoMap', dGoogle: 'Google Maps', copyKo: 'Copy Korean address', taxiBtn: 'Show taxi card',
       how1: 'By taxi: show the driver the taxi card. It has the address in big Korean text.',
@@ -136,39 +153,56 @@
       title: 'TUZEE 타투 스튜디오 · 평택 만다라, 오너먼트, 동양화 타투',
       desc: 'Zee가 직접 손으로 그리는 맞춤 만다라, 신성 기하학, 오너먼트, 동양화 타투. 평택 팽성읍 프라이빗 타투 스튜디오. 한국어 · English 상담.',
       motionPause: '움직임 일시정지', motionPlay: '움직임 재생', menuOpen: '메뉴', menuClose: '닫기', saveTile: '상담에 저장', openTile: '열기',
-      brandSub: '타투 스튜디오', navWork: '작업', navDesigns: '도안', navZee: '아티스트', navVisit: '오시는 길', navBook: '예약',
-      heroClaim: '모든 타투를 손으로 그립니다. 오직 당신의 몸을 위해.', heroSign: 'Zee, 아티스트',
+      brandSub: '타투 스튜디오', navWork: '작업', navDesigns: '도안', navZee: '아티스트', navHygiene: '위생·안전', navVisit: '오시는 길', navBook: '예약',
+      heroClaim: '당신의 체형과 움직임에 맞춰 모든 도안을 직접 손으로 그립니다.', heroSign: 'Zee · 아티스트',
       heroEyebrow: '타투 스튜디오 · 평택', heroSr: ' 타투 스튜디오',
-      heroLede: '만다라, 신성 기하학, 오너먼트, 동양화. 평택의 프라이빗 스튜디오, 하이 BPM 사운드트랙과 함께.',
+      heroLede: '정교한 도트워크 만다라, 척추 오너먼트, 이레즈미를 선보이는 평택 프라이빗 타투 스튜디오.',
       ctaStart: '도안 상담 시작', ctaWork: '작업 보기',
-      uvHint: '움직여서 비춰보세요', uvEyebrow: '01 / 블랙라이트', uvTitle: '불을 끄면 보입니다.',
-      uvLede: '이 도안은 Zee의 로고가 되었습니다. 커서나 손가락으로 비춰보세요. 그녀의 작업이 원래 보여야 하는 방식, 불을 끄고 블랙라이트 아래에서.',
-      uvAll: '전체 밝히기', uvAllOff: '다시 손전등으로',
-      cmpEyebrow: '02 / 맞춤', cmpTitle: '베끼지 않고, 당신에게 맞춰 그립니다.',
-      cmpLede: '모든 도안은 그것을 지닐 몸에 맞춰 다시 그려집니다. 어깨의 곡선, 척추의 선. 선을 움직여 도안과 완성된 작업을 나란히 비교해 보세요.',
+      uvHint: '움직여 선의 디테일을 확인하세요', uvEyebrow: '01 / 수작업 기하학', uvTitle: '하나의 중심에서 시작된 8각 대칭.',
+      uvLede: '스튜디오 심볼이 된 8각 연꽃 만다라를 비롯해 모든 기하학 도안은 종이 위에서 컴퍼스와 연필로 직접 설계합니다. 빛을 움직여 점묘의 밀도와 선의 디테일을 가까이서 확인해 보세요.',
+      uvAll: '도안 전체 보기', uvAllOff: '스포트라이트 모드로',
+      cmpEyebrow: '02 / 도안에서 피부까지', cmpTitle: '쇄골과 척추, 근육의 흐름에 맞춘 설계.',
+      cmpLede: '평면 도안은 어깨나 척추의 곡면을 감싸는 순간 형태가 달라집니다. 팔과 몸이 움직여도 대칭이 흐트러지지 않도록 체형에 맞춰 비율을 다시 잡습니다. 슬라이더를 움직여 원본 도안과 실제 시술 결과를 비교해 보세요.',
       tagDrawing: '도안', tagMockup: '목업', tagSession: '1차 세션', tagSkin: '시술 후', pairOf: '작업',
-      workEyebrow: '03 / 작업', workTitle: '이미 누군가의 몸 위에.',
-      workLede: '작업을 눌러 크게 보세요. + 버튼으로 저장하면 상담 메시지에 참고 이미지로 바로 들어갑니다.',
-      all: '전체',
-      desEyebrow: '04 / 미공개', desTitle: '아직 주인을 기다리는 도안.',
-      desLede: '미공개 도안과 바디 목업입니다. 마음에 드는 도안이 있다면 문의하거나, 나만의 디자인의 시작점으로 써보세요.',
-      segDrawings: '도안', segBody: '바디 목업',
-      zeeEyebrow: '05 / Zee · 지경은',
-      zeeTitle: '타투, 여행, 다크 하이 BPM.', p1: '손으로 그린 도안', p2: '몸에 맞춘 디자인', p3: '워크인 환영', p4: '한국어 · English',
-      zeeLede: 'Zee는 사이트랜스 셋을 짜듯 타투를 만듭니다. 대칭, 반복, 그리고 오래 볼수록 열리는 디테일. 만다라와 신성 기하학이 중심이고, 동양화, 파인라인, 리얼리즘도 작업합니다.',
+      workEyebrow: '03 / 포트폴리오', workTitle: '피부 위에 완성된 작업들.',
+      workLede: '신성 기하학, 척추 오너먼트, 이레즈미, 파인라인 보태니컬까지 실제 시술된 67점의 아카이브입니다. 사진을 눌러 디테일을 크게 보거나, + 버튼을 눌러 상담 메시지에 참고 이미지로 담아보세요.',
+      all: '전체', showAllWork: '전체 {n}점 모두 보기', showLessWork: '간략히 보기',
+      desEyebrow: '04 / 오리지널 도안 & 목업', desTitle: '주인을 기다리는 오리지널 도안.',
+      desLede: 'Zee의 스케치북에서 완성된 수작업 도안과 부위별 바디 목업입니다. 마음에 드는 도안을 그대로 예약하거나, + 버튼으로 저장해 내 체형에 맞춘 커스텀 작업의 출발점으로 삼아보세요.',
+      segDrawings: '도안', segBody: '바디 목업', showAllDes: '전체 {n}점 모두 보기', showLessDes: '간략히 보기',
+      zeeEyebrow: '05 / 아티스트 · 지경은',
+      zeeTitle: '6개국을 거쳐 쌓아온 15년의 밀도.', p1: '손으로 그린 도안', p2: '몸에 맞춘 디자인', p3: '워크인 환영', p4: '한국어 · English',
+      zeeLede: '2011년 작업을 시작해 멕시코, 브라질, 튀르키예, 일본, 베트남에서 게스트 워크를 거치며 다양한 피부 톤과 체형을 다뤄왔습니다. 평택 프라이빗 스튜디오에서 정교한 도트워크 만다라와 척추 오너먼트, 대형 오리엔탈 작업을 선보입니다.',
       fSinceK: '경력', fSinceV: '2011년부터 타투 작업', fGuestK: '게스트 작업', fGuestV: '멕시코 · 브라질 · 튀르키예 · 일본 · 베트남', fLangK: '언어', fStudioK: '스튜디오', fStudioV: '프라이빗 스튜디오. 워크인 환영.', walkIn: '워크인 환영',
-      bookEyebrow: '06 / 예약', bookTitle: '어떤 걸 새기고 싶은지 들려주세요.',
-      bookLede: '회원가입도 긴 양식도 없습니다. 여기서 메시지를 만들어 평소 쓰는 앱으로 보내면, Zee가 직접 답장합니다.',
+      hygEyebrow: '무균 위생 & 1회용 툴 안전 수칙', hygTitle: '눈앞에서 개봉하는 1회용 멸균 니들, 매 세션 새 배리어 래핑.',
+      aftercareBtn: '30일 애프터케어 및 안전 가이드',
+      hygP1K: '1회용 멸균 카트리지', hygP1V: '역류 방지 멤브레인이 내장된 개별 멸균 니들 카트리지를 시술 직전 고객 눈앞에서 직접 개봉합니다.',
+      hygP2K: '전 장비 배리어 필름 래핑', hygP2V: '머신, 그립, 암레스트, 작업 조명, 시술 베드 전체를 매 고객마다 새 일회용 배리어 필름으로 래핑합니다.',
+      hygP3K: '일회용 잉크캡 & 폐기물 밀폐', hygP3V: '잉크는 일회용 캡에 소분하여 사용하며, 사용된 니들은 즉시 전용 밀폐 용기에 분리 폐기합니다.',
+      hygP4K: '직립 자세 스텐실 설계', hygP4V: '베드에 누웠을 때의 피부 왜곡을 막기 위해 수평 바닥에 바르게 선 상태에서 척추 축과 대칭을 먼저 맞춥니다.',
+      acEyebrow: '무균 위생 · 툴 안전 수칙 & 30일 애프터케어', acTitle: '시술 순간부터 30일 회복까지 피부를 지키는 원칙',
+      acCol1: '30일 진피 회복 타임라인', acCol2: '부위별 직립 스텐실 & 맞춤 설계',
+      hygS1T: '1~4일차 · 방수 브리더블 보호 필름', hygS1D: '시술 직후 부착해 드리는 방수·투습 메디컬 필름이 외부 마찰과 먼지를 차단하고 자연 치유 진물을 보호합니다.',
+      hygS2T: '4~7일차 · 미온수 필름 제거 및 약산성 세정', hygS2D: '샤워 시 미온수를 흘려보내며 필름을 천천히 떼어낸 뒤, 무향 약산성 비누로 가볍게 씻고 전용 연고를 얇게 펴 바릅니다.',
+      hygS3T: '8~21일차 · 각질 자연 탈락 (뜯거나 불리지 않기)', hygS3D: '일어나는 얇은 각질은 절대 손으로 뜯지 마시고, 통목욕·수영장·사우나 및 과도한 땀이 나는 운동을 피해 주세요.',
+      hygS4T: '30일 이후~ · SPF 50+ 자외선 차단', hygS4D: '표피가 완전히 재생된 4주 이후부터 야외 활동 시 자외선 차단제를 발라주시면 극세선과 블랙워크의 대비가 오래 유지됩니다.',
+      acZ1K: '척추 & 등 전체', acZ1V: '베드에 엎드리면 척추 축이 4~9mm 비틀립니다. 모든 척추와 등 작업은 바르게 선 자세에서 수직 중심선을 먼저 잡습니다.',
+      acZ2K: '어깨 & 날개뼈', acZ2V: '팔을 움직일 때 늘어나는 견갑골 가동 범위를 계산하여 중심 만다라와 도트워크 그라데이션을 설계합니다.',
+      acZ3K: '팔뚝 & 슬리브', acZ3V: '손목을 회전할 때 교차하는 하박 근육의 자연스러운 나선 궤적을 따라 기하학 그리드를 감싸 왜곡을 방지합니다.',
+      acZ4K: '팔꿈치 & 무릎', acZ4V: '굽힐 때 35% 이상 팽창하는 관절 부위는 네거티브 스페이스(여백)와 고밀도 도트워크를 조화시켜 주름 사이까지 균일하게 발색시킵니다.',
+      bookEyebrow: '06 / 상담 및 예약', bookTitle: '원하는 작업을 Zee에게 직접 보내보세요.',
+      bookLede: '생각 중인 구도와 부위, 대략적인 크기를 고른 뒤 인스타그램 DM이나 카카오톡으로 바로 전송하세요. 위에서 + 버튼으로 담아둔 참고 작업들이 메시지에 자동으로 포함됩니다.',
       s1h: '아이디어 보내기', s1p: '간단한 설명, 부위, 대략적인 크기, 저장한 참고 이미지.',
       s2h: '도안 작업', s2p: '맞춤 도안과 견적을 받아보세요. 수정도 과정의 일부입니다.',
       s3h: '시술', s3p: '프라이빗 시술 후 한국어 또는 영어로 애프터케어를 안내해 드립니다.',
       fIdea: '아이디어', fIdeaPh: '예: 등 상단에 연꽃 만다라, 블랙 앤 그레이, #021 느낌으로',
       fPlace: '부위', fSize: '대략적인 크기', fRefs: '저장한 참고 이미지', fSend: '보낼 앱',
-      refsEmpty: '아직 저장한 이미지가 없습니다. 작업이나 도안에서 +를 눌러보세요.',
+      refsEmpty: '아직 저장한 이미지가 없습니다. 작업이나 도안에서 +를 눌러보세요.', clearRefs: '전체 삭제',
       fFine: '인스타그램과 카카오톡은 메시지를 미리 채울 수 없어서, 메시지를 복사해 드립니다. 채팅창에 붙여넣기 하세요.',
-      hintIg: '복사 + DM 열기', hintKakao: '복사 + 채팅 열기', hintEmail: '메일 앱 열기',
-      copied: '메시지가 복사되었습니다. 채팅창에 붙여넣어 주세요.', copiedAddr: '한국어 주소가 복사되었습니다', saved: '상담 메시지에 저장됨', unsaved: '상담 메시지에서 제거됨',
-      visitEyebrow: '07 / 오시는 길', visitTitle: '그냥 들어오세요. 조명은 낮게, 음악은 크게.',
+      hintIg: '복사 + DM 열기', hintKakao: '복사 + 채팅 열기', hintEmail: '메시지 복사',
+      copied: '메시지가 복사되었습니다. 채팅창에 붙여넣어 주세요.', emailPending: '메시지가 복사되었습니다 — 이메일 확인 중이니 인스타그램 DM이나 카카오톡에 붙여넣어 주세요.',
+      copiedAddr: '한국어 주소가 복사되었습니다', saved: '상담 메시지에 저장됨', unsaved: '상담 메시지에서 제거됨',
+      visitEyebrow: '07 / 스튜디오 위치 & 오시는 길', visitTitle: '평택 팽성읍 안정쇼핑로 52, 캐피토리움 114호.',
       addrEn: '평택시 팽성읍 안정쇼핑로 52, 캐피토리움 114호',
       mapFallback: '카카오맵에서 스튜디오 보기', toTop: '맨 위로', dNaver: '네이버 지도', dKakao: '카카오맵', dGoogle: '구글 지도', copyKo: '주소 복사', taxiBtn: '택시 카드 보기',
       how1: '택시: 기사님께 택시 카드를 보여주세요. 주소가 크게 적혀 있습니다.',
@@ -189,7 +223,11 @@
   let lang = store.get('tuzee-lang', (navigator.language || 'en').toLowerCase().startsWith('ko') ? 'ko' : 'en');
   const saved = new Set(store.get('tuzee-saved', [])); // unknown ids are dropped once data loads
   let workFilter = 'all';
+  let workExpanded = false;
   let designSeg = 'drawing';
+  let designExpanded = false;
+  const WORK_INITIAL = 16;
+  const DESIGN_INITIAL = 12;
   let pairIndex = 0;
   const t = (k) => T[lang][k] ?? T.en[k] ?? k;
   const $ = (s, r = document) => r.querySelector(s);
@@ -216,6 +254,12 @@
   }
 
   // ---------- language ----------
+  function renderSavedBadges() {
+    const suffix = saved.size ? ` (${saved.size})` : '';
+    $$('[data-i18n="dockBook"], [data-i18n="navBook"]').forEach((el) => {
+      el.textContent = t(el.dataset.i18n) + suffix;
+    });
+  }
   // Cheap: static text, labels, title. Runs before first paint so a Korean visit never shows English.
   function applyText() {
     document.documentElement.lang = lang;
@@ -223,13 +267,14 @@
     $$('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     $$('[data-i18n-placeholder]').forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
     renderDock();
+    renderSavedBadges();
     $('#uvAll').textContent = $('#uvStage').hasAttribute('data-full') ? t('uvAllOff') : t('uvAll');
     document.title = t('title');
     $('meta[name="description"]').setAttribute('content', t('desc'));
     renderMenuContact(); renderMotionLabel(); renderSocials();
     $('#toTop').setAttribute('aria-label', t('toTop'));
     $('#menuBtn').setAttribute('aria-label', t('menuOpen'));
-    $$('#menu [data-close]').forEach((b) => b.setAttribute('aria-label', t('menuClose')));
+    $$('dialog [data-close]:not([data-i18n])').forEach((b) => b.setAttribute('aria-label', t('menuClose')));
   }
   // Heavy: 127 gallery tiles, pairs, the request form. All below the fold, so on first load
   // they are built right after the first paint instead of holding the hero text back.
@@ -334,7 +379,7 @@
   function renderPairs() {
     $('#pairList').innerHTML = PAIRS.map((p, i) => `
       <li><button type="button" data-pair="${i}" aria-pressed="${i === pairIndex}">
-        <img src="${img(p.a, 'xs')}" alt="" loading="lazy" decoding="async"><span>${esc(p[lang])}</span>
+        <img src="${img(p.a, 'xs')}" alt="${esc(p[lang])}" loading="lazy" decoding="async"><span>${esc(p[lang])}</span>
       </button></li>`).join('');
   }
   function showPair(i) {
@@ -370,14 +415,15 @@
   }
   new ResizeObserver(fitFrame).observe($('#cmpStage'));
 
-  // ---------- galleries ----------
+  // ---------- galleries (SEO alt attributes + progressive reveal) ----------
   const tile = (w) => {
     const h = Math.round(560 * (w.h / w.w));
     const on = saved.has(w.id);
+    const altText = `${w[lang]} (#${w.id})`;
     return `<div class="tile" data-id="${w.id}"${on ? ' data-saved' : ''}>
-      <button class="tile-open" type="button" aria-label="${esc(t('openTile'))} #${w.id}: ${esc(w[lang])}">
-        <img src="${img(w.id)}" srcset="${img(w.id, 'xs')} 320w, ${img(w.id)} 560w" sizes="(min-width:1500px) 18vw, (min-width:1100px) 23vw, (min-width:700px) 31vw, 48vw" alt="" width="560" height="${h}" loading="lazy" decoding="async">
-        <span class="tile-cap"><span>${esc(STYLES[w.style]?.[lang] || '')}</span><code>#${w.id}</code></span>
+      <button class="tile-open" type="button">
+        <img src="${img(w.id)}" srcset="${img(w.id, 'xs')} 320w, ${img(w.id)} 560w" sizes="(min-width:1500px) 18vw, (min-width:1100px) 23vw, (min-width:700px) 31vw, 48vw" alt="${esc(altText)}" width="560" height="${h}" loading="lazy" decoding="async">
+        <span class="tile-cap" aria-hidden="true"><span>${esc(STYLES[w.style]?.[lang] || '')}</span><code>#${w.id}</code></span>
       </button>
       <button class="tile-save" type="button" data-save="${w.id}" aria-pressed="${on}" aria-label="${esc(t('saveTile'))} #${w.id}"></button>
     </div>`;
@@ -399,7 +445,22 @@
     applyWorkFilter();
   }
   function applyWorkFilter() {
-    $$('#workGrid .tile').forEach((el) => { el.hidden = workFilter !== 'all' && byId[el.dataset.id].style !== workFilter; });
+    const tiles = $$('#workGrid .tile');
+    const matching = tiles.filter((el) => workFilter === 'all' || byId[el.dataset.id].style === workFilter);
+    const shouldCap = workFilter === 'all' && !workExpanded && matching.length > WORK_INITIAL;
+    let shown = 0;
+    tiles.forEach((el) => {
+      const match = workFilter === 'all' || byId[el.dataset.id].style === workFilter;
+      if (!match) { el.hidden = true; return; }
+      shown += 1;
+      el.hidden = shouldCap && shown > WORK_INITIAL;
+    });
+    const moreBtn = $('#workMore');
+    if (moreBtn) {
+      const canToggle = workFilter === 'all' && matching.length > WORK_INITIAL;
+      moreBtn.parentElement.hidden = !canToggle;
+      moreBtn.textContent = workExpanded ? t('showLessWork') : t('showAllWork').replace('{n}', String(matching.length));
+    }
   }
   $('#workFilters').addEventListener('click', (e) => {
     const b = e.target.closest('[data-filter]');
@@ -408,20 +469,44 @@
     $$('#workFilters .chip').forEach((c) => c.setAttribute('aria-pressed', String(c === b)));
     applyWorkFilter();
   });
+  $('#workMore').addEventListener('click', () => {
+    workExpanded = !workExpanded;
+    applyWorkFilter();
+  });
 
   function renderDesigns() {
-    $('#designGrid').innerHTML = WORKS.filter((w) => w.group === designSeg).map(tile).join('');
+    const list = WORKS.filter((w) => w.group === designSeg);
+    $('#designGrid').innerHTML = list.map(tile).join('');
+    applyDesignCap(list.length);
+  }
+  function applyDesignCap(total) {
+    const tiles = $$('#designGrid .tile');
+    const shouldCap = !designExpanded && total > DESIGN_INITIAL;
+    tiles.forEach((el, idx) => { el.hidden = shouldCap && idx >= DESIGN_INITIAL; });
+    const moreBtn = $('#designMore');
+    if (moreBtn) {
+      moreBtn.parentElement.hidden = total <= DESIGN_INITIAL;
+      moreBtn.textContent = designExpanded ? t('showLessDes') : t('showAllDes').replace('{n}', String(total));
+    }
   }
   $$('[data-seg]').forEach((b) => b.addEventListener('click', () => {
     designSeg = b.dataset.seg;
+    designExpanded = false;
     $$('[data-seg]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     renderDesigns();
   }));
+  $('#designMore').addEventListener('click', () => {
+    designExpanded = !designExpanded;
+    applyDesignCap(WORKS.filter((w) => w.group === designSeg).length);
+  });
 
   function renderZee() {
     const ids = ['003', '004', '001', '002'];
     $('#zeePhotos').innerHTML = ids.map((id) => `<figure><img src="${img(id, 'l')}" alt="${esc(byId[id][lang])}" loading="lazy" decoding="async"></figure>`).join('');
   }
+
+  // ---------- aftercare & hygiene dialog ----------
+  $('#openAftercare').addEventListener('click', () => $('#aftercare').showModal());
 
   // ---------- lightbox ----------
   const lb = $('#lightbox');
@@ -478,15 +563,33 @@
       el.toggleAttribute('data-saved', saved.has(id));
       $('.tile-save', el).setAttribute('aria-pressed', String(saved.has(id)));
     });
-    renderRefs(); renderSend();
+    renderRefs(); renderSend(); renderSavedBadges();
+  }
+  function clearAllSaved() {
+    saved.clear();
+    store.set('tuzee-saved', []);
+    $$('.tile[data-saved]').forEach((el) => {
+      el.removeAttribute('data-saved');
+      $('.tile-save', el).setAttribute('aria-pressed', 'false');
+    });
+    renderRefs(); renderSend(); renderSavedBadges();
+    toast(t('unsaved'));
   }
   function renderRefs() {
     const box = $('#rRefs');
-    box.innerHTML = saved.size
-      ? [...saved].map((id) => `<span class="ref"><img src="${img(id, 'xs')}" alt="">#${id}<button type="button" data-unsave="${id}" aria-label="Remove #${id}">×</button></span>`).join('')
-      : `<p class="refs-empty">${esc(t('refsEmpty'))}</p>`;
+    if (!saved.size) {
+      box.innerHTML = `<p class="refs-empty">${esc(t('refsEmpty'))}</p>`;
+      return;
+    }
+    const pills = [...saved].map((id) => `<span class="ref"><img src="${img(id, 'xs')}" alt="">#${id}<button type="button" data-unsave="${id}" aria-label="Remove #${id}">×</button></span>`).join('');
+    const clearBtn = saved.size > 1 ? `<button type="button" class="refs-clear" data-clear-refs>${esc(t('clearRefs'))}</button>` : '';
+    box.innerHTML = pills + clearBtn;
   }
-  $('#rRefs').addEventListener('click', (e) => { const b = e.target.closest('[data-unsave]'); if (b) toggleSaved(b.dataset.unsave); });
+  $('#rRefs').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-unsave]');
+    if (b) { toggleSaved(b.dataset.unsave); return; }
+    if (e.target.closest('[data-clear-refs]')) clearAllSaved();
+  });
 
   function renderPlacement() {
     const sel = $('#rPlace'); const cur = sel.value;
@@ -518,18 +621,27 @@
     const label = { instagram: 'Instagram', kakao: lang === 'ko' ? '카카오톡' : 'KakaoTalk', email: lang === 'ko' ? '이메일' : 'Email' };
     const hint = { instagram: t('hintIg'), kakao: t('hintKakao'), email: t('hintEmail') };
     $('#rSend').innerHTML = order.map((k, i) => {
-      const href = k === 'email' ? `mailto:${LINKS.email}?subject=${encodeURIComponent('Tattoo idea')}&body=${encodeURIComponent(message())}` : LINKS[k];
+      const isPlaceholderEmail = k === 'email' && LINKS.email === 'hello@example.com';
+      const href = k === 'email' ? (isPlaceholderEmail ? '#book' : `mailto:${LINKS.email}?subject=${encodeURIComponent('Tattoo idea')}&body=${encodeURIComponent(message())}`) : LINKS[k];
       const target = k === 'email' ? '' : ' target="_blank" rel="noopener"';
       return `<a class="${i === 0 ? 'primary' : ''}" data-send="${k}" href="${esc(href)}"${target}>${label[k]}<small>${hint[k]}</small></a>`;
     }).join('');
   }
   $('#request').addEventListener('input', () => {
     const mail = $('#rSend [data-send="email"]');
-    if (mail) mail.href = `mailto:${LINKS.email}?subject=${encodeURIComponent('Tattoo idea')}&body=${encodeURIComponent(message())}`;
+    if (mail && LINKS.email !== 'hello@example.com') {
+      mail.href = `mailto:${LINKS.email}?subject=${encodeURIComponent('Tattoo idea')}&body=${encodeURIComponent(message())}`;
+    }
   });
   $('#rSend').addEventListener('click', (e) => {
     const a = e.target.closest('[data-send]');
-    if (!a || a.dataset.send === 'email') return;
+    if (!a) return;
+    if (a.dataset.send === 'email' && LINKS.email === 'hello@example.com') {
+      e.preventDefault();
+      copy(message()).then((ok) => ok && toast(t('emailPending')));
+      return;
+    }
+    if (a.dataset.send === 'email') return;
     copy(message()).then((ok) => ok && toast(t('copied')));
   });
 
@@ -546,7 +658,16 @@
     a.href = LINKS[k];
     a.textContent = k === 'kakao' ? t('dockKakao') : t('dockIg');
   }
-  $('#ftEmail').href = `mailto:${LINKS.email}`;
+  const ftEmail = $('#ftEmail');
+  if (ftEmail) {
+    ftEmail.href = LINKS.email === 'hello@example.com' ? '#book' : `mailto:${LINKS.email}`;
+    ftEmail.addEventListener('click', (e) => {
+      if (LINKS.email === 'hello@example.com') {
+        e.preventDefault();
+        copy(message()).then((ok) => ok && toast(t('emailPending')));
+      }
+    });
+  }
 
   // ---------- phone menu ----------
   const menu = $('#menu');
@@ -573,9 +694,6 @@
       s.charset = 'UTF-8';
       s.className = 'daum_roughmap_loader_script';
       s.src = 'https://t1.kakaocdn.net/kakaomapweb/roughmap/loader/prod/roughmapLoader.js';
-      // Kakao's loader pulls in the real renderer with document.write, which browsers ignore for
-      // scripts added after load. So once the loader has set window.daum.roughmap, load the
-      // renderer ourselves from the same CDN path, then render.
       s.onload = () => {
         const rm = window.daum && window.daum.roughmap;
         if (!rm) return;

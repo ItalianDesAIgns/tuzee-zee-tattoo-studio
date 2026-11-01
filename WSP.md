@@ -127,3 +127,4 @@ The `staging` branch implements a **streamlined single-page architecture** combi
    - Native Korean copy check by Zee on `T.ko` strings in `site/js/app.js` and `data/works.js`.
    - Confirm whether the 10 drawing-to-skin pairs in `PAIRS` (`site/js/app.js`) are exact matches.
    - Remove `.ft-fine` pitch disclaimer (`ftPitch`) once Zee approves the site for official launch.
+
