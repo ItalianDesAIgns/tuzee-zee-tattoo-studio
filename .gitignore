@@ -6,9 +6,10 @@ Thumbs.db
 # Dependencies & Build Caches
 node_modules/
 .vercel/
+.env*.local
 __pycache__/
 *.pyc
 
-# HyperFrames intermediate render caches (>70MB raw renders; production MP4s live in claude-version/site/media/)
-claude-version/hero-video/.hyperframes/
-claude-version/hero-video/renders/
+# HyperFrames intermediate render caches (>70MB raw renders; production MP4s live in site/media/)
+hero-video/.hyperframes/
+hero-video/renders/

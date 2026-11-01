@@ -1,14 +1,14 @@
 """Build the hero posters (webp) from media/hero-poster.jpg.
 
-Outputs (under claude-version/site/media/):
+Outputs (under site/media/):
   hero-poster.webp    1600 px wide, q72 (desktop poster)
   hero-poster-m.webp  720 px wide, centre-cropped to the 3:4 frame of hero-mobile.mp4, q72
 
 The link-preview image (og.jpg) is rendered separately from tools/og-card.html in Chrome,
 so it uses the site's own OFL fonts (Unbounded) rather than a system font:
-  node claude-version/tools/build_og_card.mjs
+  node tools/build_og_card.mjs
 
-Usage: python claude-version/tools/build_og.py
+Usage: python tools/build_og.py
 """
 from pathlib import Path
 

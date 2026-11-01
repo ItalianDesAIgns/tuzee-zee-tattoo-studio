@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "",
-  "outputDirectory": "claude-version/site",
+  "outputDirectory": "site",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [

@@ -1,14 +1,14 @@
 # Hygiene, Single-Use Tool Safety, Anatomical Calibration & Aftercare Reference
-**Target Project:** `claude-version/site/` (TUZEE Tattoo Studio — Gate 6, Camp Humphreys)  
-**Purpose:** Extracted and structured from the multi-page Atelier build (`atelier-hygiene.html`) and the Brand Research Dossier so Claude can integrate a high-trust **Hygiene, Tool Safety & Aftercare** section into `claude-version/site/index.html`.
+**Target Project:** `site/` (TUZEE Tattoo Studio — Gate 6, Camp Humphreys)  
+**Purpose:** Extracted and structured from the multi-page Atelier build (`atelier-hygiene.html`) and the Brand Research Dossier so Claude can integrate a high-trust **Hygiene, Tool Safety & Aftercare** section into `site/index.html`.
 
 ---
 
 ## Why This Matters for `claude-version`
-In `claude-version/COMPETITORS.md` (line 17) and `BRAINSTORM.md` (lines 36 & 234), Claude identified a critical market reality around Camp Humphreys (Anjeong-ri / Gate 6):
+In `COMPETITORS.md` (line 17) and `BRAINSTORM.md` (lines 36 & 234), Claude identified a critical market reality around Camp Humphreys (Anjeong-ri / Gate 6):
 > *"Several Anjeong-ri shops are named on the USFK off-limits list for health/safety. Hygiene is a trust lever."*
 
-Currently, `claude-version/site/index.html` has **no hygiene, sterilization, or tool-safety section** (only a 5-word mention in Step 03: *"aftercare notes in English or Korean"*). For USFK service members, DoD civilians, and Korean collectors traveling from Seoul, seeing explicit **single-use needle cartridge, barrier-film wrapping, sharps disposal, and SecondSkin aftercare** standards removes the #1 barrier to booking.
+Currently, `site/index.html` has **no hygiene, sterilization, or tool-safety section** (only a 5-word mention in Step 03: *"aftercare notes in English or Korean"*). For USFK service members, DoD civilians, and Korean collectors traveling from Seoul, seeing explicit **single-use needle cartridge, barrier-film wrapping, sharps disposal, and SecondSkin aftercare** standards removes the #1 barrier to booking.
 
 To respect Claude's strict pitch rule (*"no unverified facts or legal claims without Zee's confirmation"*), this document separates:
 1. **Part 1: Universal Single-Use Studio Hygiene & Tool Safety** (100% safe to publish immediately — visible in Zee's own studio session photos `001` and `002` where her wireless rotary pen is wrapped in black barrier film and she wears black nitrile examination gloves).

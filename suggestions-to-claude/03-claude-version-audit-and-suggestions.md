@@ -1,15 +1,15 @@
 # Comprehensive Audit & High-Impact Suggestions for `claude-version`
-**Reviewed Codebase:** `claude-version/site/` (`index.html`, `css/styles.css`, `js/app.js`, `data/works.js`, `vercel.json`)  
+**Reviewed Codebase:** `site/` (`index.html`, `css/styles.css`, `js/app.js`, `data/works.js`, `vercel.json`)  
 **Reviewer:** Antigravity Agent  
-**Overall Assessment:** `claude-version/site/` is an extraordinarily strong, cohesive single-page experience. The `"Blacklight"` design system (`#050506` void + `--acid: #c8ff2e` + liquid UV display typography), the interactive UV torch (`#uvStage`), the 10-pair paper-to-skin comparison slider (`#cmpStage`), the zero-dependency architecture, and the honest pitch discipline (no unverified ratings or prices) are top-tier.
+**Overall Assessment:** `site/` is an extraordinarily strong, cohesive single-page experience. The `"Blacklight"` design system (`#050506` void + `--acid: #c8ff2e` + liquid UV display typography), the interactive UV torch (`#uvStage`), the 10-pair paper-to-skin comparison slider (`#cmpStage`), the zero-dependency architecture, and the honest pitch discipline (no unverified ratings or prices) are top-tier.
 
-Below are **8 concrete, high-leverage improvements** discovered during our line-by-line review of `claude-version/site/`, ordered by impact on **Trust/CRO, Image SEO, Social Sharing, and UX Polish**.
+Below are **8 concrete, high-leverage improvements** discovered during our line-by-line review of `site/`, ordered by impact on **Trust/CRO, Image SEO, Social Sharing, and UX Polish**.
 
 ---
 
 ## 1. [Trust & CRO — High Priority] Missing Hygiene, Single-Use Tool Safety & Aftercare Section
-- **Where:** `claude-version/site/index.html` (between `#zee` line 216 and `#book` line 219)
-- **What we found:** In `claude-version/COMPETITORS.md` (line 17) and `BRAINSTORM.md` (lines 36 & 234), Claude noted that several Anjeong-ri / Gate 6 shops are on the USFK off-limits list for health/safety reasons and that *"Hygiene is a trust lever"* + planned a *"safety/aftercare short"* block. However, the final `site/index.html` has no hygiene, sterilization, or aftercare section at all.
+- **Where:** `site/index.html` (between `#zee` line 216 and `#book` line 219)
+- **What we found:** In `COMPETITORS.md` (line 17) and `BRAINSTORM.md` (lines 36 & 234), Claude noted that several Anjeong-ri / Gate 6 shops are on the USFK off-limits list for health/safety reasons and that *"Hygiene is a trust lever"* + planned a *"safety/aftercare short"* block. However, the final `site/index.html` has no hygiene, sterilization, or aftercare section at all.
 - **Solution Ready to Paste:** We extracted all hygiene, single-use cartridge, medical barrier-film wrapping, sharps disposal, standing stencil posture, and 30-day SecondSkin aftercare protocols into:
   - [`01-hygiene-tool-safety-and-aftercare.md`](./01-hygiene-tool-safety-and-aftercare.md) (full bilingual reference, separated into pitch-safe universal studio hygiene vs. post-pitch regulatory/ink-brand items)
   - [`02-drop-in-hygiene-section-for-claude-site.html`](./02-drop-in-hygiene-section-for-claude-site.html) (ready-to-paste `<section class="section flush-top" id="hygiene">` + CSS + `T.en`/`T.ko` keys matching Claude's exact `.facts` and `.steps` classes).
@@ -17,10 +17,10 @@ Below are **8 concrete, high-leverage improvements** discovered during our line-
 ---
 
 ## 2. [Image Search SEO — High Priority] All 125 Gallery `<img>` Tags Have Empty `alt=""`
-- **Where:** `claude-version/site/js/app.js` line 379 (`tileHTML`)
+- **Where:** `site/js/app.js` line 379 (`tileHTML`)
 - **What we found:**
   ```js
-  // claude-version/site/js/app.js lines 375-380
+  // site/js/app.js lines 375-380
   return `<article class="tile" data-id="${w.id}" data-cat="${w.cat}"${hide}>
     <button type="button" class="tile-open" data-open="${w.id}" aria-label="${label}">
       <img src="img/${w.id}-m.webp" srcset="img/${w.id}-s.webp 480w, img/${w.id}-m.webp 960w" sizes="(min-width: 1100px) 22vw, (min-width: 700px) 30vw, 46vw" width="${w.w}" height="${w.h}" alt="" loading="lazy" decoding="async">
@@ -43,7 +43,7 @@ Below are **8 concrete, high-leverage improvements** discovered during our line-
 ---
 
 ## 3. [Social Sharing / OpenGraph / JSON-LD — High Priority] Relative `og:image` & Missing Canonical / Sitemap
-- **Where:** `claude-version/site/index.html` lines 12 & 45
+- **Where:** `site/index.html` lines 12 & 45
 - **What we found:**
   ```html
   <meta property="og:image" content="media/og.jpg">
@@ -60,17 +60,17 @@ Below are **8 concrete, high-leverage improvements** discovered during our line-
   <meta property="og:url" content="https://tuzee-tattoo-studio.vercel.app/">
   <meta property="og:image" content="https://tuzee-tattoo-studio.vercel.app/media/og.jpg">
   ```
-  Also add a minimal `robots.txt` and `sitemap.xml` inside `claude-version/site/`.
+  Also add a minimal `robots.txt` and `sitemap.xml` inside `site/`.
 
 ---
 
 ## 4. [CRO / Mobile UX — Medium-High Priority] Live Saved-Reference Counter Badge on the Floating Dock (`#dock`) & Header CTA
-- **Where:** `claude-version/site/index.html` lines 42 & 346; `claude-version/site/js/app.js` line 521 (`renderSaved()`)
+- **Where:** `site/index.html` lines 42 & 346; `site/js/app.js` line 521 (`renderSaved()`)
 - **What we found:** Visitors can tap the `+` button (`.tile-save`) on any of the 125 tiles in `#workGrid` or `#designGrid`. However, on mobile—or while scrolling halfway through the 70-photo gallery—there is **no toast or badge count** on the sticky bottom `#dock` (`Start your design`) or header CTA showing how many pieces they have saved. Visitors only discover their saved pills when they scroll all the way down to `#book`.
 - **Recommended Fix (`js/app.js` inside `renderSaved()`):**
   Update the floating dock and header book buttons to show the count whenever `saved.length > 0`, e.g. `Start your design (3)` / `도안 상담 신청 (3)`:
   ```js
-  // Inside renderSaved() in claude-version/site/js/app.js:
+  // Inside renderSaved() in site/js/app.js:
   const countSuffix = saved.length ? ` (${saved.length})` : "";
   document.querySelectorAll('[data-i18n="dock.book"], [data-i18n="nav.book"]').forEach((el) => {
     const key = el.dataset.i18n;
@@ -81,7 +81,7 @@ Below are **8 concrete, high-leverage improvements** discovered during our line-
 ---
 
 ## 5. [Pitch Safety — Medium Priority] Guarding the Placeholder `hello@example.com` Email Button
-- **Where:** `claude-version/site/js/app.js` line 10 (`EMAIL: "hello@example.com"`) and `claude-version/site/index.html` line 287 (`id="sendEmail"`)
+- **Where:** `site/js/app.js` line 10 (`EMAIL: "hello@example.com"`) and `site/index.html` line 287 (`id="sendEmail"`)
 - **What we found:** In the `#book` section, the 3-column `.send` bar shows **Instagram DM**, **WhatsApp**, and **Email**. Because Zee's email is not yet public, clicking **Email** opens the visitor's mail client addressed to `hello@example.com`. If Zee or a client taps that button during the pitch review, seeing `hello@example.com` feels unfinished.
 - **Recommended Fix:**
   Either:
@@ -91,7 +91,7 @@ Below are **8 concrete, high-leverage improvements** discovered during our line-
 ---
 
 ## 6. [Bilingual UX — Medium Priority] Dual-Unit (`cm / in`) Clarity on Size Pills for USFK Visitors
-- **Where:** `claude-version/site/index.html` lines 267–270 and `claude-version/site/js/app.js` lines 64–67
+- **Where:** `site/index.html` lines 267–270 and `site/js/app.js` lines 64–67
 - **What we found:**
   Currently the English size chips read:
   - `Small (5–8 cm)`
@@ -109,7 +109,7 @@ Below are **8 concrete, high-leverage improvements** discovered during our line-
 ---
 
 ## 7. [Core Web Vitals / LCP — Low-Medium Priority] Add `fetchpriority="high"` to Hero Poster `<link rel="preload">`
-- **Where:** `claude-version/site/index.html` lines 37–38
+- **Where:** `site/index.html` lines 37–38
 - **What we found:**
   ```html
   <link rel="preload" as="image" href="media/hero-poster-m.webp" media="(max-width: 700px)">

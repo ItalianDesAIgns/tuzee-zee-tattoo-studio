@@ -1,12 +1,12 @@
 """Build web images + data for every asset in images/seo-image-manifest.json.
 
-Outputs (under claude-version/site/):
+Outputs (under site/):
   img/<id>-xs.webp  ~320 px wide (small thumbs, phone grid srcset)
   img/<id>-s.webp   ~560 px wide (grid thumbs)
   img/<id>-l.webp   ~1600 px wide (lightbox / hero use)
   data/works.js     window.WORKS = [...]  (one record per asset)
 
-Usage: python claude-version/tools/build_images.py
+Usage: python tools/build_images.py
 """
 import json
 import re
@@ -14,9 +14,9 @@ from pathlib import Path
 
 from PIL import Image, ImageOps
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 SRC = REPO / 'images'
-SITE = REPO / 'claude-version' / 'site'
+SITE = REPO / 'site'
 IMG = SITE / 'img'
 # Same photo/drawing twice in the source set (Rasta, 02/11/26): keep 006 over 007, 088 over 121.
 EXCLUDE = {'TUZEE-ASSET-007', 'TUZEE-ASSET-121'}

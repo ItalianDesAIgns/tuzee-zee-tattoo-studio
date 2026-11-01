@@ -117,7 +117,7 @@ Date: 02/11/26. Status: brainstorming, nothing built. Working dir: `/claude-vers
 
 Feedback: too simplified, too few images, "church-like" serif look, no hero video, no map. Zee is into psytrance and psycore.
 
-- **Site:** `site/index.html` (static, no build step). Run `node claude-version/tools/serve.mjs` from the repo root, then open `http://localhost:4180/claude-version/site/`.
+- **Site:** `site/index.html` (static, no build step). Run `node tools/serve.mjs` from the repo root, then open `http://localhost:4180/site/`.
 - **Design system "Blacklight":** black void #050506; UV fluoro accents (acid #c8ff2e for actions, UV #9d5cff, magenta #ff3dbe, cyan #3de6ff); iridescent gradient on the wordmark and logo; Unbounded display, Archivo body, JetBrains Mono labels; film grain, scanlines, glow.
 - **All 127 images used:**
   - 68 tattoos with style filters + lightbox.

@@ -1,12 +1,12 @@
 <!-- ==========================================================================
      DROP-IN MODULE FOR CLAUDE-VERSION: HYGIENE, TOOL SAFETY & AFTERCARE
-     Matches claude-version/site/css/styles.css ("Blacklight" design system)
-     and claude-version/site/js/app.js ([data-i18n] EN/KO dictionary pattern).
+     Matches site/css/styles.css ("Blacklight" design system)
+     and site/js/app.js ([data-i18n] EN/KO dictionary pattern).
      ========================================================================== -->
 
 <!-- ==========================================================================
      1. HTML SNIPPET
-     Paste into `claude-version/site/index.html` right after `</section>` of
+     Paste into `site/index.html` right after `</section>` of
      `#zee` (line 216) and before `<section class="section" id="book">` (line 219).
      ========================================================================== -->
 <section class="section flush-top" id="hygiene">
@@ -75,7 +75,7 @@
 
 <!-- ==========================================================================
      2. CSS SNIPPET
-     Append to `claude-version/site/css/styles.css` (uses existing tokens:
+     Append to `site/css/styles.css` (uses existing tokens:
      --void-2, --line, --acid, --iridescent, .facts, .steps).
      ========================================================================== -->
 <style>
@@ -89,8 +89,8 @@
 </style>
 
 <!-- ==========================================================================
-     3. I18N DICTIONARY KEYS FOR `claude-version/site/js/app.js`
-     Add to `T.en` and `T.ko` inside `claude-version/site/js/app.js`.
+     3. I18N DICTIONARY KEYS FOR `site/js/app.js`
+     Add to `T.en` and `T.ko` inside `site/js/app.js`.
      ========================================================================== -->
 <script>
 const HYGIENE_I18N_PATCH = {

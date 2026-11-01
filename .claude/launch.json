@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "claude-version-static",
+      "name": "tuzee-static",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["D:/GitHub/tuzee-zee-tattoo-studio/claude-version/tools/serve.mjs", "4180"],
+      "runtimeArgs": ["D:/GitHub/tuzee-zee-tattoo-studio/tools/serve.mjs", "4180"],
       "port": 4180
     }
   ]

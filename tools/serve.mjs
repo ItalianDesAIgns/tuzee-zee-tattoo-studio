@@ -1,5 +1,5 @@
 // Minimal static file server for local previews. Serves the repo root so
-// /claude-version pages can reach the shared /images folder.
+// /site and /prototypes pages can reach the shared /images folder.
 // Usage: node tools/serve.mjs [port]
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -7,7 +7,7 @@ import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
+const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const port = Number(process.argv[2] ?? 4180);
 const types = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript',
