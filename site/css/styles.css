@@ -366,6 +366,8 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 
 /* ---------- Visit ---------- */
 .visit { display: grid; gap: 28px; }
+#visit-title { font-size: clamp(1.85rem, 1rem + 2.5vw, 3.6rem); text-wrap: initial; }
+#visit-title .visit-loc { display: block; font-size: 0.68em; line-height: 1.05; margin-top: 0.08em; }
 @media (min-width: 1000px) { .visit { grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: stretch; } }
 .walkin { display: inline-flex; align-items: center; gap: 10px; margin: 18px 0 0; padding: 7px 14px; border: 1px solid var(--line-2); border-radius: 999px; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; }
 .walkin i { width: 8px; height: 8px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 10px var(--acid); }
