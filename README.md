@@ -1,6 +1,6 @@
 # TUZEE Tattoo Studio — Pyeongtaek, South Korea
 
-Official bilingual (`EN` / `KO`) web project, SEO image archive, brand research dossier, and engineering review for **TUZEE Tattoo Studio** (`@tuzee_tattoo`), located at Capitolium Building Suite 114, 16 Anjeongshopping-ro, Paengseong-eup, Pyeongtaek-si, Gyeonggi-do.
+Official bilingual (`EN` / `KO`) web project, SEO image archive, brand research dossier, and engineering review for **TUZEE Tattoo Studio** (`@tuzee_tattoo`), located at Capitorium #114, 52 Anjeongshopping-ro, Paengseong-eup, Pyeongtaek-si, Gyeonggi-do (경기도 평택시 팽성읍 안정쇼핑로 52, 캐피토리움 114호).
 
 ---
 
@@ -14,7 +14,6 @@ Official bilingual (`EN` / `KO`) web project, SEO image archive, brand research 
 │   ├── data/works.js               # 125 indexed works & flash pieces + 10 paper→skin pairs
 │   ├── img/                        # 500+ responsive WebP derivatives (-xs, -s, -m, -l)
 │   ├── media/                      # Hero MP4s, WebP posters, OG card, compass SVG mark
-│   └── vercel.json                 # Clean URLs & immutable asset cache headers
 │
 ├── tools/                          # Build, asset optimization & local preview scripts
 │   ├── build_images.py             # Converts images/ to WebP variants & generates site/data/works.js
@@ -38,7 +37,7 @@ Official bilingual (`EN` / `KO`) web project, SEO image archive, brand research 
 │   └── 04-preserved-atelier-hygiene-reference.html      # Archived interactive Sacred Geometry & C7–Sacrum Topology Lab
 │
 ├── specs/                          # Polish & QA specifications (polish-01.spec.md, polish-01b.addendum.md)
-├── hero-video/                     # HyperFrames source project for the 145 BPM UV hero reel
+├── hero-video/                     # HyperFrames source project for the 180 BPM UV hero reel
 ├── logo-lab/                       # Vectorized 8-fold compass lotus & wordmark candidates
 ├── prototypes/                     # Early visual direction prototypes (rounds 1–2)
 ├── BRAINSTORM.md                   # Product direction, audience decisions & build log

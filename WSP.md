@@ -30,7 +30,6 @@ D:\GitHub\tuzee-zee-tattoo-studio\
 │   ├── media/                      # hero-1080.mp4, hero-mobile.mp4, hero-poster*.webp, og.jpg, a-compass.svg, favicons
 │   ├── robots.txt                  # [staging] Crawler directives + sitemap pointer
 │   ├── sitemap.xml                 # [staging] Bilingual hreflang XML sitemap
-│   └── vercel.json                 # Immutable cache headers for /(img|media|css|js|data)/(.*)
 │
 ├── tools/                          # Build, asset generation & local server scripts (paths reconciled to repo root)
 │   ├── build_images.py             # Reads images/seo-image-manifest.json -> writes site/img/*.webp & site/data/works.js
@@ -81,9 +80,11 @@ Both agents must strictly enforce these rules established by the user (`Rasta`) 
 3. **Brand Name & Mark:**
    - The studio is **TUZEE Tattoo Studio** (never "Atelier").
    - The brand mark (`site/media/a-compass.svg`) is the **8-fold compass lotus** traced from Zee's own drawing `#084` (never use a 6-fold hexagram or 5-fold pentagram).
-4. **Copywriting Discipline (No AI Tells):**
+4. **Voice (Rasta, 02/11/26):** all site copy is written by Zee in the first person ("I draw…", "제가…"), speaking directly to the client. Exceptions: the client's own message template (`msg*`) and the pitch disclaimer (`ftPitch`).
+5. **Copywriting Discipline (No AI Tells):**
    - Never use `"It's not X, it's Y"` contrast reveals (e.g., *"Drawn to fit you, not copied onto you"*), `"No X, no Y"` negation lists, or cryptic two-word fragments (*"Lights down."*, *"Already living on someone."*).
    - Keep `H2`s and body copy concrete, craft-focused, and natural in both English and Korean.
+   - No em-dashes (U+2014) anywhere, and no unverifiable figures (the "4–9 mm spine twist" and "35% joint stretch" claims were removed on 02/11/26).
 
 ---
 
@@ -128,6 +129,11 @@ The `staging` branch implements a **streamlined single-page architecture** combi
    - Configured `.footer-brand` with flex `align-items: stretch` and `.footer-sub` (`font-size: 0.385em; line-height: 0.82; justify-content: space-between; text-transform: uppercase;`) so the two stacked words together have the exact height from the top edge to the bottom baseline of `TUZEE`.
    - Applied the continuous `.irid.liquid` UV neon gradient across both `TUZEE` and `TATTOO STUDIO`.
 
+10. **First-Person Voice Pass (Claude, 02/11/26):** 36 EN + 35 KO strings rewritten in Zee's own voice via `tools/copy_first_person.py` (also refreshes the static HTML fallbacks). H2s: "I draw every mandala out from a single center." · "I shape each design around your collarbone, spine and muscle." · "Pieces I’ve tattooed." · "Drawings I’d love to tattoo next." · "I’ve tattooed for fifteen years, in six countries." · "I open every needle in front of you and wrap my station fresh for each session." · "Send your idea straight to me." · "Find my studio in Paengseong‑eup, Pyeongtaek." Removed the two em-dashes and the unverifiable 4–9 mm / 35% figures from the aftercare dialog. Hygiene section content confirmed by Rasta.
+11. **Psy-Gradient Favicon Set:** `tools/build_favicons.py` renders the logo-lab icons as a mask over one unrotated iridescent gradient (acid → cyan → UV → magenta). Outputs `site/media/favicon.svg`, `favicon.ico` (16/32/48) and a black-background `apple-touch-icon.png`; sources kept as `logo-lab/favicon-psy.svg` and `favicon-small-psy.svg`.
+12. **Vercel Config:** root `vercel.json` now caches `css/js/data` for 1 h (+1 day stale-while-revalidate) and `img/media` for 7 days; they are not fingerprinted, so year-long immutable caching would have served stale files after redeploys. Security headers restored, plus `X-Robots-Tag: noindex, nofollow` while the site is a pitch (**remove at launch**). The unused `site/vercel.json` was deleted: with `outputDirectory: site`, Vercel reads only the root file.
+13. **README:** address corrected to `Capitorium #114, 52 Anjeongshopping-ro` (was "Capitolium … 16"), hero reel 180 BPM.
+
 ---
 
 ## 5. Pending Items & Next Steps
@@ -139,4 +145,5 @@ The `staging` branch implements a **streamlined single-page architecture** combi
    - Native Korean copy check by Zee on `T.ko` strings in `site/js/app.js` and `data/works.js`.
    - Confirm whether the 10 drawing-to-skin pairs in `PAIRS` (`site/js/app.js`) are exact matches.
    - Remove `.ft-fine` pitch disclaimer (`ftPitch`) once Zee approves the site for official launch.
+   - **At launch:** delete the `X-Robots-Tag: noindex, nofollow` header from root `vercel.json` so search engines can index the site.
 
