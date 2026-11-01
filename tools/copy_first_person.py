@@ -14,7 +14,7 @@ SITE = Path(__file__).resolve().parents[1] / 'site'
 EN = {
     'desc': 'I’m Zee. I draw custom mandala, sacred geometry, ornamental and oriental tattoos by hand in my private studio in Paengseong-eup, Pyeongtaek. English and Korean.',
     'heroLede': 'Dotwork mandalas, ornamental spine pieces and irezumi, tattooed in my private studio in Pyeongtaek.',
-    'uvTitle': 'I draw every mandala out from a single center.',
+    'uvTitle': 'I love drawing, but mandalas are my passion.',
     'uvLede': 'Every design starts on my desk with a compass, a ruler and graphite. This eight-point lotus became my studio mark. Move the light across it to see the dotwork and line weights up close.',
     'cmpTitle': 'Every line is adjusted to your shape before the needle starts.',
     'cmpLede': 'A flat drawing changes shape once it wraps a shoulder or follows a spine, so I redraw the proportions on your skin before I start. That keeps circles round when you move. Drag the slider to compare my drawing with the finished tattoo.',
@@ -53,7 +53,7 @@ EN = {
 KO = {
     'desc': '저는 Zee입니다. 평택 팽성읍의 프라이빗 스튜디오에서 만다라, 신성 기하학, 오너먼트, 동양화 타투를 직접 손으로 그립니다. 한국어 · English 상담.',
     'heroLede': '도트워크 만다라, 척추 오너먼트, 이레즈미를 평택의 제 프라이빗 스튜디오에서 작업합니다.',
-    'uvTitle': '모든 만다라를 하나의 중심에서부터 그려 나갑니다.',
+    'uvTitle': '그림 그리는 것을 좋아하지만, 만다라는 제 열정입니다.',
     'uvLede': '모든 도안은 제 책상 위에서 컴퍼스와 자, 연필로 시작합니다. 이 8각 연꽃은 스튜디오 마크가 되었어요. 빛을 움직여 도트워크와 선의 굵기를 가까이 살펴보세요.',
     'cmpTitle': '니들이 닿기 전에, 모든 선을 당신의 몸에 맞춥니다.',
     'cmpLede': '평면 도안은 어깨를 감싸거나 척추를 따라가면 형태가 달라집니다. 그래서 시술 전에 피부 위에서 비율을 다시 잡아, 움직여도 원이 둥글게 유지되도록 합니다. 슬라이더를 움직여 제 도안과 완성된 타투를 비교해 보세요.',
