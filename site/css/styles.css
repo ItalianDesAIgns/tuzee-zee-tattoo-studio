@@ -456,7 +456,37 @@ dialog::backdrop { background: rgba(3, 3, 4, 0.92); -webkit-backdrop-filter: blu
 .noscript-note a { color: var(--acid); }
 .footer-grid a { text-decoration: none; color: var(--muted); }
 .footer-grid a:hover { color: var(--fg); }
-.footer-word { font-family: var(--display); font-weight: 900; font-size: clamp(3.4rem, 1rem + 12vw, 13rem); line-height: 0.8; letter-spacing: -0.04em; margin-top: 56px; opacity: 0.9; }
+.footer-brand {
+  display: inline-flex;
+  align-items: stretch;
+  gap: clamp(10px, 2vw, 32px);
+  margin-top: 56px;
+  font-size: clamp(2.6rem, 1rem + 8.5vw, 10.5rem);
+  opacity: 0.95;
+}
+.footer-word {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1em;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+.footer-sub {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.385em;
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  padding: 0.04em 0;
+}
+.footer-sub span { display: block; }
 .dock { position: fixed; left: 10px; right: 10px; bottom: max(10px, env(safe-area-inset-bottom)); z-index: 60; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; border-radius: 20px; background: rgba(11, 11, 15, 0.86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid var(--line-2); transform: translateY(140%); transition: transform 300ms var(--ease-out); }
 .dock[data-show] { transform: none; }
 .dock .btn { min-height: 46px; }
