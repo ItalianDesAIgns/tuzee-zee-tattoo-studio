@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OG Card</title>
+<!-- 1200x630 link-preview card. Rendered to site/media/og.jpg by build_og_card.mjs. -->
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;900&family=JetBrains+Mono:wght@400&display=block" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: #050506; }
+  .card { position: relative; width: 1200px; height: 630px; display: grid; place-items: center; text-align: center; color: #f1efe9; }
+  .bg { position: absolute; inset: 0; background: url(../site/media/hero-poster.webp) center / cover; filter: brightness(0.5) saturate(1.1); }
+  .bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(5,5,6,0.1), rgba(5,5,6,0.85) 75%); }
+  .inner { position: relative; }
+  .mark { width: 92px; height: 92px; margin: 0 auto 18px; background: linear-gradient(100deg, #c8ff2e, #3de6ff 32%, #9d5cff 64%, #ff3dbe);
+    -webkit-mask: url(../site/media/a-compass.svg) center / contain no-repeat; mask: url(../site/media/a-compass.svg) center / contain no-repeat; }
+  h1 { font-family: Unbounded, sans-serif; font-weight: 900; font-size: 200px; line-height: 0.85; letter-spacing: -0.015em;
+    background: linear-gradient(100deg, #c8ff2e 0%, #3de6ff 32%, #9d5cff 64%, #ff3dbe 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 30px rgba(157, 92, 255, 0.45)); }
+  p { margin-top: 26px; font-family: "JetBrains Mono", monospace; font-size: 26px; letter-spacing: 0.22em; text-transform: uppercase; color: #e6e3ec; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="bg"></div>
+    <div class="inner">
+      <div class="mark"></div>
+      <h1>TUZEE</h1>
+      <p>Tattoo Studio · Pyeongtaek</p>
+    </div>
+  </div>
+</body>
+</html>

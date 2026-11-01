@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo Candidates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f5f2ec; --ink:#151413; --muted:#6b665e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter, system-ui, sans-serif; padding:24px 16px 64px; }
+  h1 { font-family:Fraunces, serif; font-weight:600; font-size:28px; margin:0 0 4px; }
+  p.note { color:var(--muted); margin:0 0 24px; max-width:70ch; }
+  .cand { border-top:1px solid #d9d4ca; padding:24px 0; }
+  .cand h2 { font-family:Fraunces, serif; font-weight:400; font-size:22px; margin:0 0 4px; }
+  .cand .src { color:var(--muted); font-size:13px; margin-bottom:16px; }
+  .row { display:flex; flex-wrap:wrap; gap:24px; align-items:flex-end; }
+  .panel { padding:20px; border-radius:8px; display:flex; gap:20px; align-items:flex-end; flex-wrap:wrap; }
+  .light { background:var(--paper); outline:1px solid #e3ded4; }
+  .dark { background:var(--ink); }
+  .dark img { filter:invert(1) sepia(.15); }
+  .lockup { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .word { font-family:Fraunces, serif; font-weight:600; letter-spacing:.32em; font-size:30px; margin-right:-.32em; }
+  .sub { font-size:11px; letter-spacing:.38em; text-transform:uppercase; color:var(--muted); margin-right:-.38em; }
+  .dark .word { color:var(--paper); } .dark .sub { color:#a39d93; }
+  .size { display:flex; flex-direction:column; align-items:center; gap:6px; font-size:11px; color:var(--muted); }
+  img { display:block; }
+</style>
+</head>
+<body>
+<h1>Tuzee logo candidates</h1>
+<p class="note">Traced from Zee's own drawings. Each is made exactly 8-fold symmetric, so no hexagram (6-fold) or pentagram (5-fold) can appear. Sizes shown: lockup, 128, 48, 32 and 16 px (favicon).</p>
+
+<section class="cand" data-c="a-compass">
+  <h2>A. Compass lotus</h2>
+  <div class="src">Source: radial-compass-star-dotwork-lotus-mandala-drawing</div>
+</section>
+<section class="cand" data-c="c-star">
+  <h2>B. Eight-point star</h2>
+  <div class="src">Source: eight-point-star-ornamental-dotwork-mandala-drawing</div>
+</section>
+<section class="cand" data-c="b-flame">
+  <h2>C. Flame lotus</h2>
+  <div class="src">Source: ornamental-flame-petal-lotus-dotwork-mandala-drawing</div>
+</section>
+
+<script>
+  for (const s of document.querySelectorAll('.cand')) {
+    const f = s.dataset.c + '.svg';
+    const row = document.createElement('div'); row.className = 'row';
+    for (const theme of ['light', 'dark']) {
+      const p = document.createElement('div'); p.className = 'panel ' + theme;
+      p.innerHTML = `<div class="lockup"><img src="${f}" width="220" height="220" alt=""><div class="word">TUZEE</div><div class="sub">Tattoo Studio</div></div>` +
+        [128, 48, 32, 16].map(n => `<div class="size"><img src="${f}" width="${n}" height="${n}" alt="">${n}</div>`).join('');
+      row.append(p);
+    }
+    s.append(row);
+  }
+</script>
+</body>
+</html>

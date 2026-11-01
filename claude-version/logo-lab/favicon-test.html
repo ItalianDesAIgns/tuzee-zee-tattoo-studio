@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Favicon Test</title>
+<style>
+  body{margin:0;padding:16px;background:#f5f2ec;font:12px system-ui;color:#6b665e}
+  .row{display:flex;gap:18px;align-items:flex-end;padding:14px;margin-bottom:10px}
+  .dark{background:#151413}
+  .dark img,.dark canvas{filter:invert(1)}
+  canvas{image-rendering:pixelated}
+  figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+</style></head><body>
+<div class="row" id="light"></div>
+<div class="row dark" id="dark"></div>
+<script>
+  // Real-size renders, plus the 16 and 32 px rasters blown up x6 to judge the pixels.
+  const src = 'favicon.svg?' + Date.now();
+  for (const id of ['light', 'dark']) {
+    const row = document.getElementById(id);
+    row.innerHTML = [256, 64, 48, 32, 16].map(n => `<figure><img src="${src}" width="${n}" height="${n}" alt=""><span>${n}</span></figure>`).join('');
+    for (const n of [32, 16]) {
+      const img = new Image(); img.src = src;
+      img.onload = () => {
+        const c = document.createElement('canvas'); c.width = n; c.height = n;
+        c.getContext('2d').drawImage(img, 0, 0, n, n);
+        c.style.width = c.style.height = n * 6 + 'px';
+        const f = document.createElement('figure'); f.append(c, Object.assign(document.createElement('span'), { textContent: n + 'px x6' }));
+        row.append(f);
+      };
+    }
+  }
+</script></body></html>

@@ -1,0 +1,146 @@
+<!-- ==========================================================================
+     DROP-IN MODULE FOR CLAUDE-VERSION: HYGIENE, TOOL SAFETY & AFTERCARE
+     Matches claude-version/site/css/styles.css ("Blacklight" design system)
+     and claude-version/site/js/app.js ([data-i18n] EN/KO dictionary pattern).
+     ========================================================================== -->
+
+<!-- ==========================================================================
+     1. HTML SNIPPET
+     Paste into `claude-version/site/index.html` right after `</section>` of
+     `#zee` (line 216) and before `<section class="section" id="book">` (line 219).
+     ========================================================================== -->
+<section class="section flush-top" id="hygiene">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow" data-i18n="hygiene.eyebrow">04.5 / Hygiene &amp; Tool Safety</span>
+        <h2 class="h-l liquid" data-i18n="hygiene.title">Single-use sterile. Sealed before you sit.</h2>
+      </div>
+      <p class="lede" data-i18n="hygiene.lede">Every session in Suite 114 runs 1:1 by appointment in a barrier-wrapped setup. Cartridges are unsealed in front of you, and you leave with breathable medical film and bilingual aftercare.</p>
+    </div>
+
+    <div class="hygiene-grid reveal">
+      <!-- Column 1: Single-Use Tool & Barrier Protocol -->
+      <div class="hygiene-card">
+        <span class="eyebrow" data-i18n="hygiene.col1.tag">Sterilization &amp; Barrier Setup</span>
+        <h3 class="h-m" data-i18n="hygiene.col1.title">What happens before the needle touches skin</h3>
+        <ul class="facts">
+          <li>
+            <span data-i18n="hygiene.f1.k">Cartridges</span>
+            <span data-i18n="hygiene.f1.v">100% single-use, EO-gas sterilized membrane cartridges unsealed from the blister pack in front of you</span>
+          </li>
+          <li>
+            <span data-i18n="hygiene.f2.k">Barrier wrap</span>
+            <span data-i18n="hygiene.f2.v">Rotary machine, grip, armrest, lamp, and tattoo bed wrapped in fresh medical barrier film for every client</span>
+          </li>
+          <li>
+            <span data-i18n="hygiene.f3.k">Ink &amp; sharps</span>
+            <span data-i18n="hygiene.f3.v">Single-use sterile ink caps; needles ejected immediately into a sealed biohazard sharps container</span>
+          </li>
+          <li>
+            <span data-i18n="hygiene.f4.k">Stencil posture</span>
+            <span data-i18n="hygiene.f4.v">Spine and geometric axes mapped while you stand upright on level ground before lying on the bed</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Column 2: 4-Stage Aftercare Timeline -->
+      <div class="hygiene-card">
+        <span class="eyebrow" data-i18n="hygiene.col2.tag">30-Day Healing Protocol</span>
+        <h3 class="h-m" data-i18n="hygiene.col2.title">Engineered to stay crisp 10 years out</h3>
+        <ol class="steps hygiene-steps">
+          <li>
+            <div>
+              <h4 data-i18n="hygiene.s1.t">Days 1–4 · Breathable SecondSkin shield</h4>
+              <p data-i18n="hygiene.s1.d">Medical polyurethane film applied at the studio blocks bacteria and uniform/clothing friction while locking in natural healing plasma.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h4 data-i18n="hygiene.s2.t">Days 4–7 · Warm-water peel &amp; pH-neutral wash</h4>
+              <p data-i18n="hygiene.s2.d">Peel slowly under warm shower water, wash gently with fragrance-free soap, pat dry with clean paper towel, and apply a thin layer of ointment.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h4 data-i18n="hygiene.s3.t">Days 8–30+ · Zero-pick flaking &amp; SPF 50+</h4>
+              <p data-i18n="hygiene.s3.d">Let flaking shed naturally—no picking, soaking, or sauna. Once healed at week 4, broad-spectrum SPF 50+ keeps fine lines razor-sharp.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     2. CSS SNIPPET
+     Append to `claude-version/site/css/styles.css` (uses existing tokens:
+     --void-2, --line, --acid, --iridescent, .facts, .steps).
+     ========================================================================== -->
+<style>
+/* ---------- Hygiene & Aftercare ---------- */
+.hygiene-grid { display: grid; gap: 24px; }
+@media (min-width: 960px) { .hygiene-grid { grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; } }
+.hygiene-card { background: var(--void-2); border: 1px solid var(--line); border-radius: 20px; padding: clamp(22px, 3vw, 34px); }
+.hygiene-card .h-m { margin-top: 10px; }
+.hygiene-steps { margin-top: 24px; }
+.hygiene-steps h4 { margin: 0 0 4px; font-size: 1.02rem; font-weight: 600; color: var(--fg); }
+</style>
+
+<!-- ==========================================================================
+     3. I18N DICTIONARY KEYS FOR `claude-version/site/js/app.js`
+     Add to `T.en` and `T.ko` inside `claude-version/site/js/app.js`.
+     ========================================================================== -->
+<script>
+const HYGIENE_I18N_PATCH = {
+  en: {
+    "nav.hygiene": "Hygiene",
+    "hygiene.eyebrow": "04.5 / Hygiene & Tool Safety",
+    "hygiene.title": "Single-use sterile. Sealed before you sit.",
+    "hygiene.lede": "Every session in Suite 114 runs 1:1 by appointment in a barrier-wrapped setup. Cartridges are unsealed in front of you, and you leave with breathable medical film and bilingual aftercare.",
+    "hygiene.col1.tag": "Sterilization & Barrier Setup",
+    "hygiene.col1.title": "What happens before the needle touches skin",
+    "hygiene.f1.k": "Cartridges",
+    "hygiene.f1.v": "100% single-use, EO-gas sterilized membrane cartridges unsealed from the blister pack in front of you",
+    "hygiene.f2.k": "Barrier wrap",
+    "hygiene.f2.v": "Rotary machine, grip, armrest, lamp, and tattoo bed wrapped in fresh medical barrier film for every client",
+    "hygiene.f3.k": "Ink & sharps",
+    "hygiene.f3.v": "Single-use sterile ink caps; needles ejected immediately into a sealed biohazard sharps container",
+    "hygiene.f4.k": "Stencil posture",
+    "hygiene.f4.v": "Spine and geometric axes mapped while you stand upright on level ground before lying on the bed",
+    "hygiene.col2.tag": "30-Day Healing Protocol",
+    "hygiene.col2.title": "Engineered to stay crisp 10 years out",
+    "hygiene.s1.t": "Days 1–4 · Breathable SecondSkin shield",
+    "hygiene.s1.d": "Medical polyurethane film applied at the studio blocks bacteria and uniform/clothing friction while locking in natural healing plasma.",
+    "hygiene.s2.t": "Days 4–7 · Warm-water peel & pH-neutral wash",
+    "hygiene.s2.d": "Peel slowly under warm shower water, wash gently with fragrance-free soap, pat dry with clean paper towel, and apply a thin layer of ointment.",
+    "hygiene.s3.t": "Days 8–30+ · Zero-pick flaking & SPF 50+",
+    "hygiene.s3.d": "Let flaking shed naturally—no picking, soaking, or sauna. Once healed at week 4, broad-spectrum SPF 50+ keeps fine lines razor-sharp."
+  },
+  ko: {
+    "nav.hygiene": "위생 · 안전",
+    "hygiene.eyebrow": "04.5 / 무균 위생 · 1회용 툴 안전 수칙",
+    "hygiene.title": "눈앞에서 개봉하는 1회용 멸균. 완벽한 배리어 래핑.",
+    "hygiene.lede": "114호의 모든 작업은 1:1 예약제로 진행되며 시술 전 모든 장비를 의료용 배리어 필름으로 래핑합니다. 멸균 카트리지는 시술 직전 고객 앞에서 개봉하며, 시술 후 메디컬 보호 필름과 안내문을 제공합니다.",
+    "hygiene.col1.tag": "멸균 및 배리어 프로세스",
+    "hygiene.col1.title": "바늘이 피부에 닿기 전 지키는 원칙",
+    "hygiene.f1.k": "1회용 카트리지",
+    "hygiene.f1.v": "역류 방지 멤브레인이 내장된 개별 EO가스 멸균 니들 카트리지를 시술 직전 고객 눈앞에서 개봉",
+    "hygiene.f2.k": "배리어 필름 래핑",
+    "hygiene.f2.v": "로터리 머신, 그립, 암레스트, 조명, 베드 전체를 매 시술마다 새 의료용 배리어 필름으로 전면 래핑",
+    "hygiene.f3.k": "잉크 & 폐기물",
+    "hygiene.f3.v": "1회용 멸균 잉크캡 소분 사용 후 즉시 폐기, 사용된 니들은 밀폐형 손상성 의료폐기물 전용 용기에 즉시 분리 배출",
+    "hygiene.f4.k": "직립 스텐실 설계",
+    "hygiene.f4.v": "베드에 엎드렸을 때의 피부 뒤틀림을 막기 위해 수평 바닥에 바르게 선 자세에서 척추 축과 기하학 대칭을 먼저 전사",
+    "hygiene.col2.tag": "30일 애프터케어 타임라인",
+    "hygiene.col2.title": "10년 뒤에도 선명한 발색을 위한 관리",
+    "hygiene.s1.t": "1~4일차 · 메디컬 세컨드스킨 필름 밀착",
+    "hygiene.s1.d": "시술 직후 부착해 드리는 방수·투습 필름이 외부 세균과 군복·의류 마찰을 차단하고 자연 치유 진물을 보호합니다.",
+    "hygiene.s2.t": "4~7일차 · 미온수 필름 제거 및 약산성 세정",
+    "hygiene.s2.d": "샤워 시 미온수를 흘려보내며 필름을 천천히 떼어낸 뒤, 무향 약산성 비누로 가볍게 씻고 전용 연고를 얇게 펴 바릅니다.",
+    "hygiene.s3.t": "8~30일 이후 · 각질 자연 탈락 및 자외선 차단",
+    "hygiene.s3.d": "일어나는 각질은 절대 손으로 뜯지 마시고 통목욕·사우나를 피해 주세요. 4주 후부터 야외 활동 시 SPF 50+ 선크림을 발라주면 극세선이 오래 유지됩니다."
+  }
+};
+</script>

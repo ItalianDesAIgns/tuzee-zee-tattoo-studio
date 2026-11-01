@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --ground: #050506; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { width: 100%; height: 100%; position: relative; }
+      #tunnel { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+    </style>
+  </head>
+  <body>
+    <!--
+      Tuzee hero loop: an endless forward push through Zee's own mandala drawings,
+      rendered as UV linework on black. One camera move (Z forward), no cuts.
+      Loop-perfect: every layer's state is a function of its phase (t mod 12 s),
+      and 12 s holds exactly 36 beats at 180 BPM (hi-tech psytrance), so frame 0 == frame 360.
+      Layers fly through twice per loop (SPEED = 2, an integer, so the loop stays seamless).
+    -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="1920" data-height="1080">
+      <canvas id="tunnel" class="clip" data-start="0" data-duration="12" data-track-index="0" data-track-kind="graphics" width="1920" height="1080"></canvas>
+    </div>
+    <script>
+      const W = 1920, H = 1080, CX = W / 2, CY = H / 2;
+      const LOOP = 12;                 // seconds
+      const SLOTS = 6;                 // layers in the tunnel at once (a new one every 1 s)
+      const SPEED = 2;                 // full fly-throughs per layer per loop (integer = seamless)
+      const BEAT = 60 / 180;           // hi-tech psytrance tempo
+      const S_MIN = 0.07, S_MAX = 5.2;  // layer scale at birth / at exit (1 = 1000 px wide)
+      const BASE = 1000;
+      // UV fluoro palette, cycled across layers.
+      const PALETTE = ['#c8ff2e', '#9d5cff', '#ff3dbe', '#3de6ff'];
+
+      const canvas = document.getElementById('tunnel');
+      const ctx = canvas.getContext('2d');
+
+      // Pre-tint each drawing once: a coloured glow copy and a coloured line copy.
+      function tint(img, color, blur) {
+        const c = document.createElement('canvas');
+        c.width = c.height = 1200;
+        const g = c.getContext('2d');
+        if (blur) g.filter = `blur(${blur}px)`;
+        g.drawImage(img, 0, 0);
+        g.filter = 'none';
+        g.globalCompositeOperation = 'source-in';
+        g.fillStyle = color;
+        g.fillRect(0, 0, 1200, 1200);
+        return c;
+      }
+
+      const layers = [];
+      const ready = Promise.all(
+        Array.from({ length: SLOTS }, (_, i) => new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            const color = PALETTE[i % PALETTE.length];
+            layers[i] = { line: tint(img, color, 0), glow: tint(img, color, 16) };
+            resolve();
+          };
+          img.onerror = reject;
+          img.src = `assets/m${i}.png`;
+        }))
+      );
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady.tunnel = ready;
+
+      const smooth = (x) => x * x * (3 - 2 * x);
+
+      function renderAt(time) {
+        const t = ((time % LOOP) + LOOP) % LOOP;
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#050506';
+        ctx.fillRect(0, 0, W, H);
+        if (layers.length < SLOTS) return;
+
+        // Kick: sharp attack on every beat, fast decay.
+        const sinceBeat = t % BEAT;
+        const kick = Math.exp(-sinceBeat * 14); // sharper, faster decay for 180 BPM
+
+        // Centre glow: the light at the end of the tunnel, breathing with the kick.
+        const grad = ctx.createRadialGradient(CX, CY, 0, CX, CY, 520);
+        grad.addColorStop(0, `rgba(157,92,255,${0.12 + 0.08 * kick})`);
+        grad.addColorStop(1, 'rgba(157,92,255,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw far layers first (small phase), near layers last.
+        const order = [];
+        for (let k = 0; k < SLOTS; k++) {
+          const p = (((SPEED * t / LOOP) + k / SLOTS) % 1 + 1) % 1;
+          order.push({ k, p });
+        }
+        order.sort((a, b) => a.p - b.p);
+
+        ctx.globalCompositeOperation = 'lighter';
+        for (const { k, p } of order) {
+          const s = S_MIN * Math.pow(S_MAX / S_MIN, p);
+          const size = BASE * s * (1 + 0.035 * kick); // beat punch: every kick pushes the camera
+          // Far layers stay dim so the centre never piles up into white.
+          const fadeIn = smooth(Math.min(1, p / 0.3));
+          const fadeOut = smooth(Math.min(1, (1 - p) / 0.3));
+          const a = fadeIn * fadeOut * 0.8;
+          if (a <= 0.001) continue;
+          const dir = k % 2 ? 1 : -1;               // counter-rotating neighbours
+          const angle = (dir * 150 * p + k * 19) * Math.PI / 180;
+          const L = layers[k];
+          ctx.save();
+          ctx.translate(CX, CY);
+          ctx.rotate(angle);
+          // Chromatic split grows as the layer comes closer.
+          const split = 1 + 8 * p * p;
+          ctx.globalAlpha = a * (0.18 + 0.22 * kick);
+          ctx.drawImage(L.glow, -size / 2, -size / 2, size, size);
+          ctx.globalAlpha = a;
+          ctx.drawImage(L.line, -size / 2 - split, -size / 2, size, size);
+          // Faint offset ghost in the next colour: the UV "chromatic" edge.
+          ctx.globalAlpha = a * 0.28;
+          ctx.drawImage(layers[(k + 1) % SLOTS].line, -size / 2 + split, -size / 2, size, size);
+          ctx.restore();
+        }
+
+        // Vignette keeps the edges black so page text stays readable over it.
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+        const v = ctx.createRadialGradient(CX, CY, 260, CX, CY, 1150);
+        v.addColorStop(0, 'rgba(5,5,6,0)');
+        v.addColorStop(1, 'rgba(5,5,6,0.88)');
+        ctx.fillStyle = v;
+        ctx.fillRect(0, 0, W, H);
+      }
+
+      window.addEventListener('hf-seek', (e) => {
+        if (layers.length < SLOTS) e.detail.waitUntil(ready.then(() => renderAt(e.detail.time)));
+        else renderAt(e.detail.time);
+      });
+      ready.then(() => renderAt(0));
+      renderAt(0);
+
+      // Paused GSAP timeline registered for the runtime; its length matches the root.
+      const tl = gsap.timeline({ paused: true });
+      tl.to({}, { duration: LOOP });
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
