@@ -118,6 +118,18 @@ The `staging` branch implements a **streamlined single-page architecture** combi
 
 ---
 
+7. **Hero Claim Revert (`site/index.html` & `site/js/app.js`):**
+   - Reverted hero claim strictly back to *"I draw every tattoo by hand, for one body only: yours."* / *"모든 타투를 손으로 그립니다. 오직 당신의 몸을 위해."* with artist signature *"Zee, artist"*.
+8. **Location Heading Word-Wrap & Hyphenation Fix (`#visit-title`):**
+   - Wrapped `Paengseong‑eup, Pyeongtaek.` in `<span class="visit-loc" data-i18n="visitLoc">` at `0.68em` inside a scaled `#visit-title` (`clamp(1.85rem, 1rem + 2.5vw, 3.6rem)`).
+   - Added a non-breaking hyphen (`\u2011` / `&#8209;`) to `Paengseong‑eup` to prevent awkward line breaks and hyphen wrapping across screens.
+9. **Footer Brand Lockup (`TATTOO STUDIO`):**
+   - Replaced standalone `TUZEE` text with a stacked brand lockup: `TUZEE` on the left and stacked two-line `TATTOO<br>STUDIO` on the right.
+   - Configured `.footer-brand` with flex `align-items: stretch` and `.footer-sub` (`font-size: 0.385em; line-height: 0.82; justify-content: space-between; text-transform: uppercase;`) so the two stacked words together have the exact height from the top edge to the bottom baseline of `TUZEE`.
+   - Applied the continuous `.irid.liquid` UV neon gradient across both `TUZEE` and `TATTOO STUDIO`.
+
+---
+
 ## 5. Pending Items & Next Steps
 
 1. **Merge `staging` → `main` (Upon User Approval):**

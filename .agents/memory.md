@@ -29,3 +29,8 @@
 
 ### 4. Streamlined Single-Page Architecture & Copy Rewrite (`staging` branch)
 - **Applied Fix:** Added compact 4-pillar Hygiene & Tool Safety strip (`#hygiene`), `<dialog id="aftercare">` 30-day healing & anatomical stencil modal, progressive gallery reveal (`16` initial works / `12` initial designs), bilingual SEO `alt` attributes on all 125 gallery images, live saved-reference counter badge, placeholder email clipboard guard, and rewrote all section `H2`s and body copy in EN/KO to eliminate AI contrast-reveal tells and cryptic fragments. Documented full handover state in `WSP.md`.
+
+
+### 5. #visit Heading Hyphenation & Footer Brand Height Alignment
+- **#visit Title Wrapping:** On certain viewports, Paengseong-eup, Pyeongtaek. wrapped awkwardly. Fixed by applying .visit-loc at 0.68em and a non-breaking hyphen Paengseong‑eup (‑) so the location line never hyphen-breaks across rows.
+- **Footer Brand Height Matching:** Added stacked Tattoo Studio (uppercase TATTOO / STUDIO) to the footer brand. Implemented in pure CSS via .footer-brand flex align-items: stretch and .footer-sub font-size: 0.385em, line-height: 0.82, justify-content: space-between, matching the exact height of TUZEE across all viewports with liquid UV gradient continuity.
