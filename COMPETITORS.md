@@ -12,7 +12,20 @@ Scope: Humphreys / Anjeong-ri / Songtan studios, Seoul private studios, top sacr
 
 ## 1. Local market (Pyeongtaek / Anjeong-ri / Songtan)
 
-- No local studio with a proper website surfaced; shops live on Instagram, Threads, Naver Place and directories. A clean bilingual site is a differentiator (based on search results only, not a full Naver audit).
+- **Website check, KakaoMap (02/11/26).**
+  - Method: searched 평택 타투, 송탄 타투, 안정리 타투, 팽성 타투 and 고덕 타투, and read the homepage field of every listing.
+  - Result: **30 tattoo studios listed besides Zee; none links to its own website.**
+
+    | Online presence (KakaoMap homepage field) | Studios |
+    |---|---|
+    | Naver blog | 5: 타투로드, 진타투, 썬라이즈타투, 호리테츠타투디자인, 75타투 |
+    | Daum café | 1: 타투피플 |
+    | Instagram | 5: 신타투&피어싱, 브라보타투, 야누스 타투, 상 타투, 엔와이투타투 (same building as Zee, #102) |
+    | Nothing | 19: 타투 (평택1로20번길), 타투스튜디오, 블랙소울타투, 신디타투, 골드피쉬타투, YJ타투, 니드타투스튜디오, 레이스타투, 와와타투, 타투로스, 엔비타투, 시은타투, 사일리타투, 프리마인드타투, 올블루타투스튜디오, 하율타투, 하쿠나타투, 평택타투타투타임, 평택타투마스터 잉크디자인 |
+
+  - Web searches (EN and KO) found no Pyeongtaek/Songtan studio website either; only directory profiles (Tattooed.co, Tattoos Wizard).
+  - **Not checked:** Naver Map/Place directly (blocked in the agent's browser), and studios with no map listing at all. So the safe pitch line is "none of the ~30 studios on KakaoMap has its own website", not "no competitor anywhere".
+  - **Found for Zee:** KakaoMap has **two** 투지타투 listings: 투지타투(tuzeetattoo) at 안정쇼핑로 52 (current, place 2118907749) and an older 투지타투 at 팽성읍 두정1길 103 (place 388204001). Neither links a homepage. After launch: add the site URL to her KakaoMap and Naver listings, and update or close the old one.
 - Several Anjeong-ri shops are named on the off-limits list for health/safety. Hygiene is a trust lever, but only with claims Zee can prove.
 
 ## 2. Seoul private studios (tone and booking models)
