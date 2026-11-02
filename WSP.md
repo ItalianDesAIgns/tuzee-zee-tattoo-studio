@@ -144,8 +144,7 @@ The `staging` branch implements a **streamlined single-page architecture** combi
 
 ## 5. Pending Items & Next Steps
 
-1. **Merge `staging` → `main` (Upon User Approval):**
-   - Once the user approves the `staging` preview, merge `staging` into `main` (`git checkout main && git merge staging && git push origin main`) so https://tuzee-zee-tattoo-studio.vercel.app serves the updated build.
+1. **`staging` → `main` (done 02/11/26, Rasta approved):** `main` fast-forwarded to `e9c3b46` (identical to `staging`, no merge commit); production at https://tuzee-zee-tattoo-studio.vercel.app verified anonymously (200, new copy, favicon, background, `noindex`). Future releases: fast-forward only (`git push origin origin/staging:main`) after the staging preview is approved; preview URLs need a Vercel login, so Zee only ever sees production.
 2. **Post-Pitch Confirmations from Zee:**
    - Replace `LINKS.email = 'hello@example.com'` in `site/js/app.js` with Zee's real email address (or remove the email button if she only uses Instagram DM + KakaoTalk).
    - Native Korean copy check by Zee on `T.ko` strings in `site/js/app.js` and `data/works.js`.
