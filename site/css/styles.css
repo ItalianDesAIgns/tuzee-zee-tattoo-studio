@@ -547,3 +547,33 @@ ul.socials, .socials { display: flex; flex-direction: row; flex-wrap: wrap; alig
 .ac-facts li { grid-template-columns: 120px 1fr; padding: 12px 0; font-size: 0.88rem; }
 .refs-clear { border: 1px dashed var(--line-2); background: transparent; color: var(--muted); border-radius: 999px; padding: 4px 12px; font-family: var(--mono); font-size: 0.7rem; transition: color 150ms ease-out, border-color 150ms ease-out; }
 .refs-clear:hover { color: var(--fg); border-color: var(--fg); }
+/* ---------- Page background: "Mix" (Rasta, 02/11/26) ----------
+   A faint dotwork grid behind the text sections (it echoes Zee's dotwork), pure obsidian behind
+   the photo sections so the tattoos keep a clean ground, and one iridescent mandala watermark
+   (her compass-lotus drawing) behind the Zee section, turning slowly as it scrolls through. */
+html { background: var(--void); }
+body { background: transparent; }
+html::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(241, 239, 233, 0.08) 1px, transparent 1.4px);
+  background-size: 16px 16px;
+}
+#paper, #work, #designs { background: var(--void); }
+#zee { position: relative; isolation: isolate; overflow-x: clip; } /* the mandala may overhang sideways; never scroll */
+#zee::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  left: 72%; top: 50%; width: min(1000px, 120vw); aspect-ratio: 1; translate: -50% -50%;
+  opacity: 0.14;
+  background: conic-gradient(from 0deg, var(--acid), var(--cyan), var(--uv), var(--magenta), var(--acid));
+  -webkit-mask: url(../media/uv-lines.webp) center / contain no-repeat;
+  mask: url(../media/uv-lines.webp) center / contain no-repeat;
+}
+/* Phones: the photos stack above the text, so the mandala centres behind the text block. */
+@media (max-width: 959px) { #zee::before { left: 50%; top: 72%; } }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    @keyframes zee-spin { to { rotate: 180deg; } }
+    #zee::before { animation: zee-spin linear both; animation-timeline: view(); }
+  }
+}
+html[data-motion="off"] #zee::before { animation: none; }

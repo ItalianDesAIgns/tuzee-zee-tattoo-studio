@@ -133,6 +133,12 @@ The `staging` branch implements a **streamlined single-page architecture** combi
 11. **Psy-Gradient Favicon Set:** `tools/build_favicons.py` renders the logo-lab icons as a mask over one unrotated iridescent gradient (acid → cyan → UV → magenta). Outputs `site/media/favicon.svg`, `favicon.ico` (16/32/48) and a black-background `apple-touch-icon.png`; sources kept as `logo-lab/favicon-psy.svg` and `favicon-small-psy.svg`.
 12. **Vercel Config:** root `vercel.json` now caches `css/js/data` for 1 h (+1 day stale-while-revalidate) and `img/media` for 7 days; they are not fingerprinted, so year-long immutable caching would have served stale files after redeploys. Security headers restored, plus `X-Robots-Tag: noindex, nofollow` while the site is a pitch (**remove at launch**). The unused `site/vercel.json` was deleted: with `outputDirectory: site`, Vercel reads only the root file.
 13. **README:** address corrected to `Capitorium #114, 52 Anjeongshopping-ro` (was "Capitolium … 16"), hero reel 180 BPM.
+14. **Page Background "Mix" (Rasta, 02/11/26):** after a 5-option comparison (Obsidian / Stipple / Watermark / Ambience / Mix), the site uses:
+   - a faint 16 px dotwork grid on a fixed `html::before` layer behind the text sections;
+   - pure obsidian on `#paper`, `#work` and `#designs`, so the tattoo photos keep a clean ground;
+   - one iridescent mandala watermark (`media/uv-lines.webp`, Zee's #084 compass lotus) behind `#zee`, turning slowly via a `view()` scroll timeline.
+
+   Static under reduced motion and with the motion toggle off; `#zee` clips horizontally so the overhang never causes sideways scroll. CSS lives at the end of `site/css/styles.css`.
 
 ---
 
