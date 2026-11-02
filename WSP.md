@@ -139,6 +139,14 @@ The `staging` branch implements a **streamlined single-page architecture** combi
    - one iridescent mandala watermark (`media/uv-lines.webp`, Zee's #084 compass lotus) behind `#zee`, turning slowly via a `view()` scroll timeline.
 
    Static under reduced motion and with the motion toggle off; `#zee` clips horizontally so the overhang never causes sideways scroll. CSS lives at the end of `site/css/styles.css`.
+15. **More Mandala Watermarks (Rasta, 02/11/26):** for consistency, every text section now carries one of Zee's own drawings, each different and spinning in alternate directions:
+   - `#zee` #084 compass lotus;
+   - `#hygiene` #125 ten-point star;
+   - `#book` #088 eight-point star (left, behind the steps; the form panel would hide it on the right);
+   - `#visit` #086 ouroboros star;
+   - footer #117 flame lotus.
+
+   The new layers (`site/media/mandala-*.webp`, 720 px, alpha-only, 260 KB total) come from `hero-video/assets/m*.png`. Photo sections stay clean. The shared rule clips each section horizontally (no sideways scroll).
 
 ---
 

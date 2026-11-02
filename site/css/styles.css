@@ -559,8 +559,12 @@ html::before {
   background-size: 16px 16px;
 }
 #paper, #work, #designs { background: var(--void); }
-#zee { position: relative; isolation: isolate; overflow-x: clip; } /* the mandala may overhang sideways; never scroll */
-#zee::before {
+/* Mandala watermarks: one of Zee's own drawings per text section, alternating sides and spin
+   direction, as faint iridescent linework. Photo sections (#paper, #work, #designs) stay clean.
+   #zee #084 compass lotus · #hygiene #125 ten-point star · #book #088 eight-point star ·
+   #visit #086 ouroboros star · footer #117 flame lotus. */
+#zee, #hygiene, #book, #visit, .site-footer { position: relative; isolation: isolate; overflow-x: clip; } /* overhang never scrolls sideways */
+#zee::before, #hygiene::before, #book::before, #visit::before, .site-footer::before {
   content: ""; position: absolute; z-index: -1; pointer-events: none;
   left: 72%; top: 50%; width: min(1000px, 120vw); aspect-ratio: 1; translate: -50% -50%;
   opacity: 0.14;
@@ -568,12 +572,25 @@ html::before {
   -webkit-mask: url(../media/uv-lines.webp) center / contain no-repeat;
   mask: url(../media/uv-lines.webp) center / contain no-repeat;
 }
-/* Phones: the photos stack above the text, so the mandala centres behind the text block. */
-@media (max-width: 959px) { #zee::before { left: 50%; top: 72%; } }
+#hygiene::before { left: 18%; width: min(860px, 110vw); opacity: 0.12;
+  -webkit-mask-image: url(../media/mandala-125.webp); mask-image: url(../media/mandala-125.webp); }
+#book::before { left: 14%; top: 74%; width: min(900px, 110vw); opacity: 0.12;
+  -webkit-mask-image: url(../media/mandala-088.webp); mask-image: url(../media/mandala-088.webp); }
+#visit::before { left: 22%; top: 62%; width: min(820px, 105vw); opacity: 0.12;
+  -webkit-mask-image: url(../media/mandala-086.webp); mask-image: url(../media/mandala-086.webp); }
+.site-footer::before { left: 86%; top: 55%; width: min(760px, 100vw); opacity: 0.12;
+  -webkit-mask-image: url(../media/mandala-117.webp); mask-image: url(../media/mandala-117.webp); }
+/* Phones: centre each mandala behind the section's text. */
+@media (max-width: 959px) {
+  #zee::before { left: 50%; top: 72%; }
+  #hygiene::before, #book::before, #visit::before, .site-footer::before { left: 50%; }
+}
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     @keyframes zee-spin { to { rotate: 180deg; } }
-    #zee::before { animation: zee-spin linear both; animation-timeline: view(); }
+    @keyframes zee-spin-rev { to { rotate: -180deg; } }
+    #zee::before, #book::before, .site-footer::before { animation: zee-spin linear both; animation-timeline: view(); }
+    #hygiene::before, #visit::before { animation: zee-spin-rev linear both; animation-timeline: view(); }
   }
 }
-html[data-motion="off"] #zee::before { animation: none; }
+html[data-motion="off"] :is(#zee, #hygiene, #book, #visit, .site-footer)::before { animation: none; }
