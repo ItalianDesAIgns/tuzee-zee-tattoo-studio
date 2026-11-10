@@ -1,6 +1,6 @@
 # WSP.md — Workflow State Protocol & Shared Agent Handover (Claude + Antigravity)
 
-> **Last Updated:** 2026-11-02  
+> **Last Updated:** 2026-11-10 (moved from repo root to `.agents/WSP.md`, the standard path in every repo)  
 > **Repository:** https://github.com/ItalianDesAIgns/tuzee-zee-tattoo-studio  
 > **Purpose:** Shared source of truth for **Claude** and **Antigravity (Gemini)** so either agent can resume work on **TUZEE Tattoo Studio** without losing context, breaking paths, or violating editorial/brand decisions.
 
