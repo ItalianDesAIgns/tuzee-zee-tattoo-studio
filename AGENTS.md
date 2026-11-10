@@ -8,4 +8,4 @@ Execution goes out in this exact order:
 2. **Gemini in the Antigravity IDE**, only with Rasta present (skipped when he is away).
 3. **Claude Sonnet / Haiku subagents.**
 
-When any step fails (unavailable, out of quota, erroring, stalled, or unable to finish the task), Opus warns Rasta at once and **pauses the workflow until he says `go step 2` / `go step 3`**. No automatic fall-through. **Opus executes only on Rasta's own `opus go` for that task**, never inferred from an earlier task, from urgency or from a subagent. Enforced by the Claude Code hook `opus-guard` (global settings). Full body: `D:\GitHub\agency-os\.agents\MODEL-ROUTING.md` § 0; essence: global `governance.md`.
+When any step fails (unavailable, out of quota, erroring, stalled, or unable to finish the task), Opus warns Rasta at once and **pauses the workflow until he says `go step 2` / `go step 3`**. No automatic fall-through. **Opus executes only on Rasta's own `opus go` for that task**, never inferred from an earlier task, from urgency or from a subagent. Full body: `D:\GitHub\agency-os\.agents\MODEL-ROUTING.md` § 0; essence: global `governance.md`.
