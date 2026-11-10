@@ -61,7 +61,7 @@ D:\GitHub\tuzee-zee-tattoo-studio\
 ├── COMPETITORS.md                  # Pyeongtaek / Seoul competitor analysis
 ├── tuzee_tattoo_brand_research_digital_strategy_dossier.md  # Initial brand & market research dossier
 ├── vercel.json                     # Root Vercel config ("outputDirectory": "site")
-└── WSP.md                          # This shared handover file
+├── .agents/WSP.md                  # This shared handover file
 ```
 
 ---
