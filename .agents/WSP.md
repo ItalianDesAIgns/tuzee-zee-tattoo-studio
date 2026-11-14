@@ -6,6 +6,8 @@
 
 ---
 
+> **15/11/26:** repo carries its own model routing (.agents/MODEL-ROUTING.md, utomations/model-routing/); AGENTS.md no longer points outside the repo (commit 2625bdf, branch staging).
+
 ## 1. Live Environments & Git Branch Topology
 
 | Branch | Role | Live Vercel URL | Status |
