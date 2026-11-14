@@ -1,0 +1,155 @@
+{
+  "_comment": "Declarative routing policy for agy-route.ps1. NO LOGIC LIVES HERE. Platform-neutral on purpose: a future POSIX wrapper for Hermes reads this same file. Do not fork it. DOCTRINE (Rasta, 28/07/26): the most capable model does the thinking, cheaper models do the typing, the cheapest carries the messages - and the two subscriptions split by vendor, Google models in agy and Anthropic models in Claude Code. That split is not tidiness: it makes cross-family verification STRUCTURAL rather than dependent on a policy flag, since work typed by a Google model is always judged by an Anthropic one. Architect is Opus 5; verifier is Opus 4.8 in a separate context (the 'local-verifier' subagent) - independence comes from the context boundary, which is what AGENTS.md actually requires. Execution runs on Gemini 3.6 Flash and never on Opus. P1 (Claude Pro) is consumed only by the architect, the verifier, the Haiku couriers, and the last-rung local executor. Model choices are benchmark-backed as of 28/07/26, not habit - re-check when a new model ships.",
+  "version": 2,
+  "updated": "2026-10-13",
+  "pools": {
+    "P1": {
+      "name": "Claude Pro (Anthropic)",
+      "routable": false,
+      "id": "claude-pro",
+      "note": "Claude Code + Claude desktop only. agy-route.ps1 cannot drive it; exit 10 hands off to the local-executor subagent."
+    },
+    "P2": {
+      "name": "Google AI Pro - Gemini pool",
+      "routable": true,
+      "id": "gemini"
+    },
+    "P3": {
+      "name": "Google AI Pro - Claude+GPT pool",
+      "routable": true,
+      "id": "claude",
+      "note": "Billed by Google, not Anthropic. Does not touch P1. A small emergency buffer, not a second engine."
+    }
+  },
+  "thresholds": {
+    "weekly_drained_pct": 20,
+    "p3_max_calls_per_window": 3,
+    "p3_window_hours": 5
+  },
+  "verifier_must_differ_from_executor": true,
+  "_opus_roles_note": "Roles ALLOWED to reach an Opus model. Every other role is banned from Opus, derived here rather than hardcoded in the script (DoD item 8; proven both directions by claim C6 on 28/07/26). 'verifier' was added 28/07/26: verification is the critical-thinking rung and now runs on the most capable model available, while execution - which is typing - never does.",
+  "opus_roles": [
+    "architect",
+    "verifier"
+  ],
+  "dry_run_default": false,
+  "health_probe": {
+    "_comment": "D1 two-tier pre-flight. Tier 1 is a free static read of mcp_config.json on every run. Tier 2 is this live call, rate-limited by probe_ttl_min so it costs at most one cheap P2 call per hour, never one per routed run. A probe that ran per-call would consume the very allowance this task exists to conserve.",
+    "model": "gemini-3.8-flash-low",
+    "pool": "P2",
+    "prompt": "Reply with exactly the two characters OK and nothing else.",
+    "timeout_sec": 60,
+    "probe_ttl_min": 60,
+    "retries": 1,
+    "mcp_config_path": "%USERPROFILE%\\.gemini\\config\\mcp_config.json",
+    "mcp_denylist_servers": [
+      "cloudflare-api",
+      "StitchMCP",
+      "gmp-code-assist"
+    ],
+    "mcp_denylist_command_substrings": [],
+    "_denylist_note": "Server NAMES only. An earlier draft also denylisted any server whose command contained 'mcp-remote', inferred from the posthog definition. Testing on 27/07/26 disproved it: Stitch, gmp-code-assist and vercel all use mcp-remote and were present in the very config A13 proved healthy. mcp-remote is NOT a failure predictor. The split is deliberate - the static check catches the two servers known BY NAME to hang, and the live probe catches anything new empirically, rather than guessing at command shapes. UPDATED 17/08/26: 'posthog' removed. Root cause of the hang was mcp-remote@0.1.38 negotiating protocol 2025-11-25 against a PostHog endpoint that now requires 2026-07-28; the 400 left the connection half-open and agy waited on it. The entry now uses agy's native serverUrl transport, which fails fast (401) instead of hanging. Verified: agy --print returns in ~2s with posthog present in mcp_config.json. UPDATED 23/09/26: 'StitchMCP' and 'gmp-code-assist' added. Both were marked disabled in mcp_config.json (the CLI ignores that flag) and hung 'still connecting' for 90s+, so every run exited 30 from 22/09/26. Removed from mcp_config.json via 'agy mcp remove'; listed here so a re-add fails fast in the static check. Probe after removal: OK in 23s. UPDATED 23/09/26 (b): timeout_sec 20 -> 60. After the removal agy's cold start (MCP servers + auth) measured 23 s to answer, so a 20 s probe failed a healthy agy."
+  },
+  "quota_signals": {
+    "_comment": "D3 fail-closed matcher. Provenance: extracted by string search from agy.exe v1.1.7 on 27/07/26 - INFERRED, NOT OBSERVED. A6 remains UNVERIFIED. If none of these ever match, behaviour is identical to treating every non-zero exit as a generic error, which is the conservative rule. The first live match is logged in full as QUOTA_SIGNAL_FIRST_OBSERVED so the real string finally gets captured.",
+    "exhaustion_patterns": [
+      "RESOURCE_EXHAUSTED",
+      "resource_exhausted",
+      "retry_model_capacity_exhausted"
+    ],
+    "auth_patterns": [
+      "No valid OAuth token or refresh token found",
+      "authentication failed",
+      "please sign in"
+    ],
+    "denied_no_output_marker": "no output produced",
+    "invalid_model_patterns": [
+      "invalid model selection"
+    ]
+  },
+  "watchdog": {
+    "_comment": "24/09/26 (Rasta): two executor runs sat 15+ min doing nothing before a human noticed. agy-route.ps1 (watchdog.ps1) kills a run as STALLED (exit 60) when no command runs under agy and its log is idle for log_idle_sec, or (executor only) the workspace has not changed for executor_no_progress_sec; a single command running past child_max_sec is also a stall. poll_sec is the check interval.",
+    "poll_sec": 30,
+    "log_idle_sec": 300,
+    "executor_no_progress_sec": 900,
+    "child_max_sec": 900
+  },
+  "logging": {
+    "retention_days": 14,
+    "max_files": 200,
+    "enabled": true
+  },
+  "roles": {
+    "architect": {
+      "_comment": "Rung 1 is Claude Opus 5 in Claude Code (P1) and is NOT routable - the router cannot execute it, Rasta already is it. Via the router, architect reaches Opus in agy only when -Model is passed explicitly (escalate_only); automatic fallback lands on the best Gemini rung. UPDATED 13/10/26: agy no longer accepts the 3.7 Flash, Sonnet 4.6 or Opus 4.6 ids (invalid model selection; `agy models` lists Gemini 3.8 Flash low/medium/high, Claude Sonnet 5.5 and Opus 5.5 low/medium/high, GPT-OSS 120B). Retired ids removed; Claude rungs moved to the 5.5 generation.",
+      "preference": [
+        {
+          "pool": "P3",
+          "model": "claude-opus-5-5-high",
+          "escalate_only": true
+        },
+        {
+          "pool": "P2",
+          "model": "gemini-3.8-flash-high"
+        }
+      ],
+      "local_fallback": false,
+      "skip_permissions": false
+    },
+    "executor": {
+      "_comment": "UPDATED 14/11/26 (Rasta: use the agy default model): executor rung 1 is gemini-4-argon-medium, the model agy itself defaults to (cli.log: selected model Gemini 4 Argon (Medium)). Execution is typing, so it runs on the cheapest capable model. Ladder revised 28/07/26 on published benchmarks, replacing the earlier IDE-habit ordering. gemini-3.1-pro-high was REMOVED from every chain: 3.6 Flash beats it on every published benchmark and by wide margins (SWE-bench Pro 58.7 vs 54.2, DeepSWE 49 vs 12, Terminal-bench 78.0 vs 73.8, MLE-bench 63.9 vs 42.6), so keeping Pro as the 'heavy' rung after the Flash generations meant the ladder DOWNGRADED while claiming to escalate. Opus is unreachable here, enforced in the script and not only in this data - execution never justifies the scarcest reasoning budget. UPDATED 13/10/26: agy no longer accepts the 3.7 Flash, Sonnet 4.6 or Opus 4.6 ids (invalid model selection; `agy models` lists Gemini 3.8 Flash low/medium/high, Claude Sonnet 5.5 and Opus 5.5 low/medium/high, GPT-OSS 120B). Retired ids removed; Claude rungs moved to the 5.5 generation. The 3.7 rung was also useless as quota insurance: the Gemini quota is per account ('Individual quota reached'), so a second Gemini model drains with the first.",
+      "preference": [
+        {
+          "pool": "P2",
+          "model": "gemini-4-argon-medium"
+        },
+        {
+          "pool": "P3",
+          "model": "claude-sonnet-5-5-medium",
+          "rationed": true,
+          "_note": "DRAIN INSURANCE ONLY, not part of the main road. The doctrine is Google models in agy and Anthropic models in Claude Code, but P3 is Google-billed capacity that expires ~98% unused every week, so spending it here delays touching Claude Pro when the Gemini pool drains."
+        }
+      ],
+      "local_fallback": true,
+      "skip_permissions": true
+    },
+    "verifier": {
+      "_comment": "ROUTED FALLBACK ONLY, revised 28/07/26. The PRIMARY verifier is now the 'local-verifier' subagent - Claude Opus 4.8 in Claude Code, in its own context - because verification is the one place capability is worth paying for. Benchmarks settle it: Opus 4.8 scores 69.2% on SWE-bench Pro vs Gemini 3.6 Flash's 58.7%, and every routed alternative sits below that. Architect is Opus 5, verifier is Opus 4.8: a different version in a separate context, which is what AGENTS.md actually requires. This chain is what runs when the caller is NOT Claude Code (a future Hermes lane, or an agy-driven flow). Ordered strongest-first on published benchmarks: Opus 4.6 (SWE-bench Verified 80.8) then Sonnet 4.6 (79.6), with a Gemini rung last so a verifier still exists when P3 is spent. Note the deliberate exception to the Google-in-agy doctrine: routed verification stays on Claude models so it remains CROSS-FAMILY against Gemini-executed work. gemini-3.1-pro-high was removed - it is the weakest model in the inventory (DeepSWE 12%) and it had been auditing Opus-authored code. Verification calls are short while execution calls are long, so the scarce P3 pool buys the most judgement per token here. CONTAINMENT, corrected 27/07/26 (D5): the old claim here - that skip_permissions false makes a verifier physically unable to fix what it finds - was FALSE in the direction that mattered. It also made the verifier unable to READ a spec outside WorkDir or RUN a single test, so it could not verify anything behavioural; two runs returned no verdict at all and the router called them successes. agy has no sandboxed-execution path (--sandbox denies command execution outright), so permissions.allow now grants read_file(*) + command(*). write_file stays denied, so the file tool is still blocked, but a shell command CAN write. Containment is therefore enforced in the router instead: it fingerprints the workspace before and after a read-only role and fails the run if anything changed. UPDATED 13/10/26: agy no longer accepts the 3.7 Flash, Sonnet 4.6 or Opus 4.6 ids (invalid model selection; `agy models` lists Gemini 3.8 Flash low/medium/high, Claude Sonnet 5.5 and Opus 5.5 low/medium/high, GPT-OSS 120B). Retired ids removed; Claude rungs moved to the 5.5 generation.",
+      "preference": [
+        {
+          "pool": "P3",
+          "model": "claude-opus-5-5-high",
+          "rationed": true
+        },
+        {
+          "pool": "P3",
+          "model": "claude-sonnet-5-5-high",
+          "rationed": true
+        },
+        {
+          "pool": "P2",
+          "model": "gemini-3.8-flash-high"
+        }
+      ],
+      "local_fallback": false,
+      "skip_permissions": false
+    },
+    "scout": {
+      "_comment": "Grep-class work, so the -low effort ids. Never touches P3. Flip to -high if Rasta prefers uniformity. UPDATED 13/10/26: agy no longer accepts the 3.7 Flash, Sonnet 4.6 or Opus 4.6 ids (invalid model selection; `agy models` lists Gemini 3.8 Flash low/medium/high, Claude Sonnet 5.5 and Opus 5.5 low/medium/high, GPT-OSS 120B). Retired ids removed; Claude rungs moved to the 5.5 generation.",
+      "preference": [
+        {
+          "pool": "P2",
+          "model": "gemini-3.8-flash-low"
+        }
+      ],
+      "local_fallback": true,
+      "skip_permissions": false
+    }
+  },
+  "unused_models": {
+    "_comment": "gpt-oss-120b-medium draws on P3, the scarce pool, with no role that needs it. Do not add it without a decision from Rasta.",
+    "models": [
+      "gpt-oss-120b-medium"
+    ]
+  }
+}

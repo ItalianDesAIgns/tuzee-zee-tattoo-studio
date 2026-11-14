@@ -13,3 +13,4 @@ __pycache__/
 # HyperFrames intermediate render caches (>70MB raw renders; production MP4s live in site/media/)
 hero-video/.hyperframes/
 hero-video/renders/
+automations/model-routing/working/
