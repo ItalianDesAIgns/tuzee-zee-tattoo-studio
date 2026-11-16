@@ -2,9 +2,12 @@
   Live tests (needs agy signed in; costs no quota: agy rejects a bad id before any model call).
   1. Every model id in policy.json (role ladders + health probe) is one agy currently offers ('agy models').
   2. Invoke-Agy classifies a retired id as signal 'invalid_model' (so the router skips to the next rung).
+  3. The id set from 'agy models' equals models.known.json (the model-catalog watch, spec 0008). A difference FAILS
+     and says what to do. -KnownPath points the check at another snapshot (used to plant a failure).
   Run: powershell -NoProfile -ExecutionPolicy Bypass -File automations/model-routing/test_policy_models.ps1
   Exit 0 = all pass, 1 = any failure.
 #>
+param([string]$KnownPath = '')
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $AgyExe = Join-Path $env:LOCALAPPDATA 'agy\bin\agy.exe'
@@ -24,6 +27,22 @@ $ids = @($Policy.health_probe.model)
 foreach ($r in $Policy.roles.PSObject.Properties) { $ids += @($r.Value.preference | ForEach-Object { $_.model }) }
 foreach ($id in ($ids | Sort-Object -Unique)) {
     Check "policy model '$id' is offered by agy" ($listed -contains $id) ("agy offers: " + ($listed -join ', '))
+}
+
+# ---- 3. catalog equals snapshot (model-catalog watch)
+if (-not $KnownPath) { $KnownPath = Join-Path $Root 'models.known.json' }
+$knownOk = Test-Path $KnownPath
+Check 'models.known.json is readable' $knownOk "missing: $KnownPath"
+if ($knownOk) {
+    $known = @((Get-Content $KnownPath -Raw -Encoding UTF8 | ConvertFrom-Json).models)
+    $live = @($listed | Sort-Object -Unique)
+    $added = @($live | Where-Object { $known -notcontains $_ })
+    $removed = @($known | Where-Object { $live -notcontains $_ })
+    $same = ($added.Count -eq 0 -and $removed.Count -eq 0)
+    $detail = "added: [" + ($added -join ', ') + "] removed: [" + ($removed -join ', ') + "]. " +
+        "agy's model list changed. Re-read https://antigravity.google/docs/models/ and the new model's card, decide the ladders (MODEL-ROUTING.md section 6), " +
+        "update policy.json + MODEL-ROUTING.md + models.known.json in agency-os, copy to every repo, run the daily brief's drift check."
+    Check 'agy models equals models.known.json' $same $detail
 }
 
 # ---- 2. retired id -> invalid_model

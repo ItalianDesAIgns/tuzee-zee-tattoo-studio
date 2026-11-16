@@ -1,7 +1,7 @@
 {
-  "_comment": "Declarative routing policy for agy-route.ps1. NO LOGIC LIVES HERE. Platform-neutral on purpose: a future POSIX wrapper reads this same file. Do not fork it. DOCTRINE (Rasta, 28/07/26): the most capable model does the thinking, cheaper models do the typing, the cheapest carries the messages - and the two subscriptions split by vendor, Google models in agy and Anthropic models in Claude Code. That split is not tidiness: it makes cross-family verification STRUCTURAL rather than dependent on a policy flag, since work typed by a Google model is always judged by an Anthropic one. Architect is Opus 5; verifier is Opus 4.8 in a separate context (the 'local-verifier' subagent) - independence comes from the context boundary, which is what AGENTS.md actually requires. Execution runs on Gemini 3.6 Flash and never on Opus. P1 (Claude Pro) is consumed only by the architect, the verifier, the Haiku couriers, and the last-rung local executor. Model choices are benchmark-backed as of 28/07/26, not habit - re-check when a new model ships.",
-  "version": 2,
-  "updated": "2026-10-13",
+  "_comment": "Declarative routing policy for agy-route.ps1. NO LOGIC LIVES HERE. Platform-neutral on purpose: a future POSIX wrapper reads this same file. Do not fork it. DOCTRINE (Rasta, 28/07/26): the most capable model does the thinking, cheaper models do the typing, the cheapest carries the messages - and the two subscriptions split by vendor, Google models in agy and Anthropic models in Claude Code. That split is not tidiness: it makes cross-family verification STRUCTURAL rather than dependent on a policy flag, since work typed by a Google model is always judged by an Anthropic one. Architect is Opus 5; verifier is Opus 4.8 in a separate context (the 'local-verifier' subagent) - independence comes from the context boundary, which is what AGENTS.md actually requires. Execution runs on Gemini 4 Hydrogen (Flash as backup) and never on Opus. P1 (Claude Pro) is consumed only by the architect, the verifier, the Haiku couriers, and the last-rung local executor. Model choices are benchmark-backed as of 28/07/26, not habit - re-check when a new model ships.",
+  "version": 3,
+  "updated": "2026-11-16",
   "pools": {
     "P1": {
       "name": "Claude Pro (Anthropic)",
@@ -35,7 +35,7 @@
   "dry_run_default": false,
   "health_probe": {
     "_comment": "D1 two-tier pre-flight. Tier 1 is a free static read of mcp_config.json on every run. Tier 2 is this live call, rate-limited by probe_ttl_min so it costs at most one cheap P2 call per hour, never one per routed run. A probe that ran per-call would consume the very allowance this task exists to conserve.",
-    "model": "gemini-3.8-flash-low",
+    "model": "gemini-4-hydrogen-low",
     "pool": "P2",
     "prompt": "Reply with exactly the two characters OK and nothing else.",
     "timeout_sec": 60,
@@ -90,6 +90,10 @@
         },
         {
           "pool": "P2",
+          "model": "gemini-4-argon-high"
+        },
+        {
+          "pool": "P2",
           "model": "gemini-3.8-flash-high"
         }
       ],
@@ -97,11 +101,19 @@
       "skip_permissions": false
     },
     "executor": {
-      "_comment": "UPDATED 14/11/26 (Rasta: use the agy default model): executor rung 1 is gemini-4-argon-medium, the model agy itself defaults to (cli.log: selected model Gemini 4 Argon (Medium)). Execution is typing, so it runs on the cheapest capable model. Ladder revised 28/07/26 on published benchmarks, replacing the earlier IDE-habit ordering. gemini-3.1-pro-high was REMOVED from every chain: 3.6 Flash beats it on every published benchmark and by wide margins (SWE-bench Pro 58.7 vs 54.2, DeepSWE 49 vs 12, Terminal-bench 78.0 vs 73.8, MLE-bench 63.9 vs 42.6), so keeping Pro as the 'heavy' rung after the Flash generations meant the ladder DOWNGRADED while claiming to escalate. Opus is unreachable here, enforced in the script and not only in this data - execution never justifies the scarcest reasoning budget. UPDATED 13/10/26: agy no longer accepts the 3.7 Flash, Sonnet 4.6 or Opus 4.6 ids (invalid model selection; `agy models` lists Gemini 3.8 Flash low/medium/high, Claude Sonnet 5.5 and Opus 5.5 low/medium/high, GPT-OSS 120B). Retired ids removed; Claude rungs moved to the 5.5 generation. The 3.7 rung was also useless as quota insurance: the Gemini quota is per account ('Individual quota reached'), so a second Gemini model drains with the first.",
+      "_comment": "UPDATED 16/11/26 (spec 0008): Hydrogen is the executor workhorse. Facts checked 16/11/26: (1) Gemini 4 Hydrogen is built for rapid execution, 1M context, on every plan, with its own quota; (2) Gemini 4 Argon is a frontier reasoning model with its own small weekly quota ('Individual quota reached ... Resets in 139h' while Hydrogen answered), so quota is per model family and the old 'one Gemini quota per account' claim is false for Gemini 4; (3) typing never justifies a frontier model, so Argon left the executor ladder. History: ladder re-ordered on benchmarks 28/07/26 (Pro removed after losing to Flash everywhere); Opus is unreachable for this role, enforced in the script and not only in this data; retired ids removed 13/10/26.",
       "preference": [
         {
           "pool": "P2",
-          "model": "gemini-4-argon-medium"
+          "model": "gemini-4-hydrogen-medium"
+        },
+        {
+          "pool": "P2",
+          "model": "gemini-4-hydrogen-high"
+        },
+        {
+          "pool": "P2",
+          "model": "gemini-3.8-flash-high"
         },
         {
           "pool": "P3",
@@ -128,6 +140,10 @@
         },
         {
           "pool": "P2",
+          "model": "gemini-4-argon-high"
+        },
+        {
+          "pool": "P2",
           "model": "gemini-3.8-flash-high"
         }
       ],
@@ -137,6 +153,10 @@
     "scout": {
       "_comment": "Grep-class work, so the -low effort ids. Never touches P3. Flip to -high if Rasta prefers uniformity. UPDATED 13/10/26: agy no longer accepts the 3.7 Flash, Sonnet 4.6 or Opus 4.6 ids (invalid model selection; `agy models` lists Gemini 3.8 Flash low/medium/high, Claude Sonnet 5.5 and Opus 5.5 low/medium/high, GPT-OSS 120B). Retired ids removed; Claude rungs moved to the 5.5 generation.",
       "preference": [
+        {
+          "pool": "P2",
+          "model": "gemini-4-hydrogen-low"
+        },
         {
           "pool": "P2",
           "model": "gemini-3.8-flash-low"

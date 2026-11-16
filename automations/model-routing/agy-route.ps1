@@ -530,9 +530,18 @@ function Get-Prompt {
 }
 
 # ---------------------------------------------------------------- candidate resolution
+# 16/11/26 (spec 0008): quota is per model FAMILY, not per exact id and not per pool. Argon's weekly quota is
+# separate from Hydrogen's and Flash's, but every thinking level of one family shares it. The family is the id
+# without its thinking-level suffix, so an exhausted gemini-4-argon-medium also skips gemini-4-argon-high
+# (it would fail the same way) while gemini-4-hydrogen-* and gemini-3.8-flash-* stay eligible.
+function Get-ModelFamily([string]$ModelId) {
+    return ([string]$ModelId) -replace '-(low|medium|high|xhigh)$', ''
+}
 function Test-Blacklisted($poolId, $modelId) {
+    $fam = Get-ModelFamily $modelId
     foreach ($b in @($State.blacklist)) {
-        if ((Get-Prop $b 'model' '') -eq $modelId) { return $true }
+        $bm = [string](Get-Prop $b 'model' '')
+        if ($bm -and (Get-ModelFamily $bm) -eq $fam) { return $true }
     }
     return $false
 }

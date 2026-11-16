@@ -44,3 +44,26 @@ and stopping executors; independent audit and read-only scouts.
 | 60 | timeout / watchdog stall | next rung |
 
 Run state and logs are written to `automations/model-routing/working/` (gitignored).
+
+## 2. Gemini 4 family (16/11/26)
+
+| Model | Role here | Plans | Quota |
+|---|---|---|---|
+| Hydrogen | Workhorse executor and scout: rapid execution, 1M context, thinking levels low/medium/high/xhigh | all plans | its own |
+| Argon | Frontier reasoning and the Orchestrator planner; routed only as architect/verifier fallback | Pro and Ultra | separate small weekly quota on Pro (exhausted Argon returned `RESOURCE_EXHAUSTED ... Resets in 139h` while Hydrogen answered) |
+| Carbon | Strongest reasoner (and Orchestrator (Carbon)) | Ultra and Enterprise only | unavailable on this account |
+
+Because quota is per model family, the router blacklists a family (the id without its thinking-level suffix) on a
+quota signal: an exhausted Argon leaves Hydrogen and Flash eligible, and skips the other Argon levels.
+
+**Orchestrator.** `gemini-pro-orchestrator-g1-pro` ("Orchestrator (Argon)") is a fixed configuration: the planner
+(Argon, or Carbon) plans and reviews, Hydrogen implements, control returns to the planner on trouble. It is the
+recommended model choice for **Lane 2** sessions started in the Antigravity IDE: "Orchestrator (Argon)" while Argon
+has quota, plain "Gemini 4 Hydrogen" when it does not. The router never uses it (a router call needs one
+deterministic model, and in Lane 1 the planner is already the Claude session), so it is in no ladder.
+
+**How this stays current.** `models.known.json` is a snapshot of `agy models`. `test_policy_models.ps1` (check 3)
+and the daily brief's "Model catalog" section both compare the live list with it and warn on any added or removed
+id; the brief's drift check keeps the repo copies equal. On a warning: re-read the Antigravity models page, decide
+the ladders (agency-os `.agents/MODEL-ROUTING.md` section 6), update `policy.json`, this file and `models.known.json` in
+agency-os, copy to every repo.
