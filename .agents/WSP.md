@@ -6,6 +6,7 @@
 
 ---
 
+> **17/11/26:** model-routing liveness watchdog, 4h ceiling, and acceptance gate (Spec 0012, commit `d0353be`, branch `staging`).
 > **15/11/26:** repo carries its own model routing (.agents/MODEL-ROUTING.md, utomations/model-routing/); AGENTS.md no longer points outside the repo (commit 2625bdf, branch staging).
 
 ## 1. Live Environments & Git Branch Topology
