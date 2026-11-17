@@ -1,21 +1,16 @@
 <#
-  Stall watchdog for agy runs, dot-sourced by agy-route.ps1.
+  Liveness watchdog for agy runs, dot-sourced by agy-route.ps1 (Spec 0012, 17/11/26).
 
-  Why (Rasta, 24/09/26): two executor runs in two days sat for 15+ minutes with no output and
-  were found only because a human asked. A total timeout alone (30 min) is too slow to catch a
-  hang, and a check that depends on the Architect remembering to arm it is not enforcement.
-  This polls the running agy process and kills it when it stops making progress.
+  Replaces fixed wall-clock kills (child_max_sec 900, log_idle_sec 300) with liveness
+  tracking. A long test suite, ffmpeg render, or hyperframes compile runs safely as
+  long as ANY liveness signal moves within DeadAfterSec (600s default), up to the
+  4-hour MaxRunSec (14400s) hard safety ceiling:
+    1. AgyLog write: LogFile size or LastWriteTimeUtc advances.
+    2. Process CPU work: parent or non-MCP busy descendant process CPU advances (>0.05s).
+    3. Workspace progress: edited/new file timestamp under WorkDir/ProgressDir advances.
 
-  A run is STALLED when no command is running under agy (MCP servers excluded) and either
-    - agy's own log has not been written for LogIdleSec (hung on a model call or a tool), or
-    - (executor only) the workspace has not changed for NoProgressSec (thinking in circles).
-  A command running under agy counts as work, but only up to ChildMaxSec: a child that runs
-  longer than that is itself treated as the stall (a hung pip-audit inside preflight, 23/09/26).
-
-  Limit: the workspace check reads `git status`, so edits made by another agent in the same
-  tree at the same time look like progress. The log and child checks still hold. Outside a git
-  worktree it falls back to the newest file write under the directory; pass a narrow
-  -ProgressDir to agy-route.ps1 so that scan stays cheap on a large folder.
+  MCP servers and startup-window servers (within StartupGraceSec) are excluded from the
+  child-work filter so an idle background MCP server never fakes liveness for a frozen agent.
 #>
 
 function Get-DescendantProcesses {
@@ -36,11 +31,6 @@ function Get-DescendantProcesses {
 }
 
 function Get-BusyChildren {
-    # MCP servers live for the whole run and are not work; conhost is plumbing. agy starts its
-    # MCP servers in its first seconds, and not every one says "mcp" on its command line
-    # (@modelcontextprotocol/server-sequential-thinking does not; found live 24/09/26, when it
-    # masked idleness and would have tripped ChildMaxSec on a healthy run). So anything born in
-    # the startup window counts as infrastructure, as does anything naming MCP.
     param([int]$RootId, [datetime]$InfraBefore = [datetime]::MinValue)
     return @(Get-DescendantProcesses -RootId $RootId | Where-Object {
         $cl = [string]$_.CommandLine
@@ -51,16 +41,9 @@ function Get-BusyChildren {
 }
 
 function Get-WorkspaceProgressStamp {
-    # Changes whenever a file is created, deleted or rewritten, including a second edit to a
-    # file that git already shows as modified (the porcelain text alone would not change).
     param([string]$Dir)
     if (-not $Dir -or -not (Test-Path $Dir)) { return '' }
     try {
-        # Not a git worktree (a client folder on Drive, 13/10/26): git status prints nothing, so
-        # the stamp never changed and a healthy run was killed as "no workspace change". Fall
-        # back to the newest file write anywhere under the directory, plus the file count.
-        # PS 5.1 with ErrorActionPreference=Stop turns git's "fatal: not a git repository" on
-        # stderr into a terminating error even with 2>$null, so relax it for this one probe.
         $eap = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
         $null = & git -C $Dir rev-parse --is-inside-work-tree 2>$null
@@ -90,8 +73,6 @@ function Get-WorkspaceProgressStamp {
 
 function Stop-ProcessTree {
     param([int]$RootId)
-    # Process.Kill() leaves children alive (a preflight started by agy kept running after its
-    # parent died). taskkill /T takes the whole tree.
     & taskkill.exe /T /F /PID $RootId 2>&1 | Out-Null
 }
 
@@ -99,63 +80,98 @@ function Wait-ProcessWithWatchdog {
     <#  Returns @{ outcome = 'exited' | 'timeout' | 'stalled'; reason = <text> }  #>
     param(
         [Parameter(Mandatory = $true)] [System.Diagnostics.Process]$Process,
-        [int]$TotalTimeoutSec = 1800,
+        [int]$TotalTimeoutSec = 14400,
+        [int]$MaxRunSec = 14400,
+        [int]$DeadAfterSec = 600,
         [string]$LogFile = '',
-        [int]$LogIdleSec = 300,
         [string]$WorkDir = '',
-        [int]$NoProgressSec = 0,          # 0 = workspace check off (read-only roles)
-        [int]$ChildMaxSec = 900,
-        [int]$PollSec = 15,
+        [string]$ProgressDir = '',
+        [int]$PollSec = 30,
         [int]$StartupGraceSec = 30,
         [scriptblock]$Log = { param($m) }
     )
     $start = Get-Date
+    $ceiling = [Math]::Min($TotalTimeoutSec, $MaxRunSec)
     $infraBefore = $Process.StartTime.AddSeconds($StartupGraceSec)
-    $lastProgress = Get-Date
-    $stamp = ''
-    if ($NoProgressSec -gt 0) { $stamp = Get-WorkspaceProgressStamp -Dir $WorkDir }
+    $lastAlive = $start
+    $lastReason = 'startup'
+
+    $prevLogLen = -1L
+    $prevLogTicks = 0L
+    $perPidCpu = @{}
+    $watchDir = if ($ProgressDir) { $ProgressDir } else { $WorkDir }
+    $stamp = if ($watchDir) { Get-WorkspaceProgressStamp -Dir $watchDir } else { '' }
+
+    # Seed baseline CPU for the root process so idle launch ticks alone do not look like work later
+    try {
+        $rp = Get-Process -Id $Process.Id -ErrorAction SilentlyContinue
+        if ($rp) { $perPidCpu[$Process.Id] = [double]$rp.TotalProcessorTime.TotalSeconds }
+    } catch { }
 
     while ($true) {
         if ($Process.WaitForExit($PollSec * 1000)) { return @{ outcome = 'exited'; reason = '' } }
         $now = Get-Date
         $elapsed = ($now - $start).TotalSeconds
 
-        if ($elapsed -ge $TotalTimeoutSec) {
+        if ($elapsed -ge $ceiling) {
             Stop-ProcessTree -RootId $Process.Id
-            return @{ outcome = 'timeout'; reason = "total timeout ${TotalTimeoutSec}s reached" }
+            return @{ outcome = 'timeout'; reason = "max ceiling ${ceiling}s reached" }
         }
 
+        $aliveThisSample = $false
         $busy = @(Get-BusyChildren -RootId $Process.Id -InfraBefore $infraBefore)
-        $oldest = $null
-        foreach ($b in $busy) { if ($b.CreationDate -and (-not $oldest -or $b.CreationDate -lt $oldest.CreationDate)) { $oldest = $b } }
-        if ($oldest -and (($now - $oldest.CreationDate).TotalSeconds -ge $ChildMaxSec)) {
-            $cl = [string]$oldest.CommandLine
-            $cl = $cl.Substring(0, [Math]::Min(160, $cl.Length))
-            Stop-ProcessTree -RootId $Process.Id
-            return @{ outcome = 'stalled'; reason = "a command has run over ${ChildMaxSec}s: $cl" }
-        }
 
-        if ($NoProgressSec -gt 0) {
-            $s = Get-WorkspaceProgressStamp -Dir $WorkDir
-            if ($s -ne $stamp) { $stamp = $s; $lastProgress = $now }
-        }
-        # A running command is work: it resets the no-progress clock (a 10 min preflight must
-        # not trip it the moment it ends). ChildMaxSec above bounds a hung command.
-        if ($busy.Count -gt 0) { $lastProgress = $now; continue }
-
+        # Signal 1: -agy.log file size or mtime advanced
         if ($LogFile -and (Test-Path -LiteralPath $LogFile)) {
-            $idle = ($now - (Get-Item -LiteralPath $LogFile).LastWriteTime).TotalSeconds
-        } else {
-            $idle = $elapsed    # no log yet: idle since launch
+            $item = Get-Item -LiteralPath $LogFile -ErrorAction SilentlyContinue
+            if ($item) {
+                $len = [long]$item.Length
+                $ticks = [long]$item.LastWriteTimeUtc.Ticks
+                if ($len -ne $prevLogLen -or $ticks -ne $prevLogTicks) {
+                    $prevLogLen = $len
+                    $prevLogTicks = $ticks
+                    $aliveThisSample = $true
+                    $lastReason = 'log'
+                }
+            }
         }
-        if ($idle -ge $LogIdleSec) {
+
+        # Signal 2: CPU delta > 0.05s across parent + non-MCP busy descendants
+        $checkIds = @([int]$Process.Id)
+        foreach ($b in $busy) { if ($b.ProcessId -and ($checkIds -notcontains [int]$b.ProcessId)) { $checkIds += [int]$b.ProcessId } }
+        $totalCpuDelta = 0.0
+        foreach ($cid in $checkIds) {
+            $proc = Get-Process -Id $cid -ErrorAction SilentlyContinue
+            if (-not $proc) { continue }
+            $cpuNow = 0.0
+            try { $cpuNow = [double]$proc.TotalProcessorTime.TotalSeconds } catch { continue }
+            $prevCpu = if ($perPidCpu.ContainsKey($cid)) { [double]$perPidCpu[$cid] } else { 0.0 }
+            $delta = $cpuNow - $prevCpu
+            $perPidCpu[$cid] = $cpuNow
+            if ($delta -gt 0.05) { $totalCpuDelta += $delta }
+        }
+        if ($totalCpuDelta -gt 0.05) {
+            $aliveThisSample = $true
+            $lastReason = 'cpu'
+        }
+
+        # Signal 3: Workspace / progress dir change
+        if ($watchDir) {
+            $s = Get-WorkspaceProgressStamp -Dir $watchDir
+            if ($s -ne $stamp) {
+                $stamp = $s
+                $aliveThisSample = $true
+                $lastReason = 'workspace'
+            }
+        }
+
+        if ($aliveThisSample) { $lastAlive = $now }
+        $deadFor = ($now - $lastAlive).TotalSeconds
+
+        if ($deadFor -ge $DeadAfterSec) {
             Stop-ProcessTree -RootId $Process.Id
-            return @{ outcome = 'stalled'; reason = ("agy log idle {0:N0}s with no command running" -f $idle) }
+            return @{ outcome = 'stalled'; reason = ("no liveness for {0:N0}s (dead_after={1}s, last={2})" -f $deadFor, $DeadAfterSec, $lastReason) }
         }
-        if ($NoProgressSec -gt 0 -and (($now - $lastProgress).TotalSeconds -ge $NoProgressSec)) {
-            Stop-ProcessTree -RootId $Process.Id
-            return @{ outcome = 'stalled'; reason = "no workspace change for ${NoProgressSec}s with no command running" }
-        }
-        & $Log ("  watchdog: t+{0:N0}s log_idle={1:N0}s busy_children={2}" -f $elapsed, $idle, $busy.Count)
+        & $Log ("  watchdog: t+{0:N0}s dead_idle={1:N0}s/{2}s cpu_d={3:N2}s busy_children={4} last={5}" -f $elapsed, $deadFor, $DeadAfterSec, $totalCpuDelta, $busy.Count, $lastReason)
     }
 }

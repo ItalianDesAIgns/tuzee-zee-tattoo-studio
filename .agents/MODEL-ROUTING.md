@@ -41,8 +41,12 @@ and stopping executors; independent audit and read-only scouts.
 | 30 | agy invocation error or MCP unhealthy | next rung |
 | 40 | bad policy | fix `policy.json`, do not cycle |
 | 50 | bad spec | fix the spec, do not cycle |
-| 60 | timeout / watchdog stall | next rung |
+| 60 | timeout (4h ceiling `max_run_sec: 14400`) or no-liveness watchdog stall (`dead_after_sec: 600`) | next rung |
+| 70 | acceptance command failed or refused (`--live` / `git push` guard) | fix and re-run |
 
+Watchdog uses liveness signals (`-agy.log` writes, descendant CPU delta >0.05s excluding MCP servers,
+workspace edits) instead of fixed `child_max_sec` wall-clock kills. Startup probes log via `-AgyLogFile`
+with `timeout_sec: 120` (cold CLI starts with `chrome-devtools-mcp --autoConnect` measured 20–86s).
 Run state and logs are written to `automations/model-routing/working/` (gitignored).
 
 ## 2. Gemini 4 family (16/11/26)

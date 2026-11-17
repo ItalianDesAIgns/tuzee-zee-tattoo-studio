@@ -38,7 +38,7 @@
     "model": "gemini-4-hydrogen-low",
     "pool": "P2",
     "prompt": "Reply with exactly the two characters OK and nothing else.",
-    "timeout_sec": 60,
+    "timeout_sec": 120,
     "probe_ttl_min": 60,
     "retries": 1,
     "mcp_config_path": "%USERPROFILE%\\.gemini\\config\\mcp_config.json",
@@ -68,11 +68,10 @@
     ]
   },
   "watchdog": {
-    "_comment": "24/09/26 (Rasta): two executor runs sat 15+ min doing nothing before a human noticed. agy-route.ps1 (watchdog.ps1) kills a run as STALLED (exit 60) when no command runs under agy and its log is idle for log_idle_sec, or (executor only) the workspace has not changed for executor_no_progress_sec; a single command running past child_max_sec is also a stall. poll_sec is the check interval.",
+    "_comment": "Spec 0012 (17/11/26): replaced wall-clock child_max_sec (900) and log_idle_sec kills with liveness signals (agy log writes, descendant process CPU delta, workspace/progress-dir edits). Only kills STALLED (exit 60) when ALL liveness signals stay dead for dead_after_sec (600s), or when max_run_sec (14400s = 4h) hard ceiling is reached.",
     "poll_sec": 30,
-    "log_idle_sec": 300,
-    "executor_no_progress_sec": 900,
-    "child_max_sec": 900
+    "dead_after_sec": 600,
+    "max_run_sec": 14400
   },
   "logging": {
     "retention_days": 14,

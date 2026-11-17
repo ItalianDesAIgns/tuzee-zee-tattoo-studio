@@ -25,7 +25,7 @@
     A16 An auto-denied run still exits 0. EXIT CODE ALONE IS NOT A SUCCESS SIGNAL.
 
 .EXAMPLE
-  .\agy-route.ps1 -Role executor -Spec <abs path of a spec in this repo>
+  .\agy-route.ps1 -Role executor -Spec D:\GitHub\agency-os\.agents\handoff\tasks\0018-agy-model-routing.md
 #>
 [CmdletBinding()]
 param(
@@ -42,7 +42,8 @@ param(
     # when WorkDir is large and not a git repo, e.g. the output folder of a cataloguing job.
     [string]$ProgressDir = '',
     [switch]$DryRun,
-    [int]$TimeoutSec = 1800,
+    [int]$TimeoutSec = 14400,
+    [string[]]$AcceptanceCmd = @(),
     [switch]$RefreshQuota
 )
 
@@ -50,21 +51,22 @@ Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 # ---------------------------------------------------------------- exit codes
-$EXIT_OK            = 0
-$EXIT_EXHAUSTED     = 10   # every agy candidate spent/blocked -> LOCAL FALLBACK AUTHORISED
-$EXIT_AUTH          = 20
-$EXIT_AGY_ERROR     = 30   # agy invocation error, or MCP unhealthy
-$EXIT_POLICY        = 40
-$EXIT_SPEC          = 50
-$EXIT_TIMEOUT       = 60
+$EXIT_OK = 0
+$EXIT_EXHAUSTED = 10   # every agy candidate spent/blocked -> LOCAL FALLBACK AUTHORISED
+$EXIT_AUTH = 20
+$EXIT_AGY_ERROR = 30   # agy invocation error, or MCP unhealthy
+$EXIT_POLICY = 40
+$EXIT_SPEC = 50
+$EXIT_TIMEOUT = 60
+$EXIT_ACCEPTANCE = 70   # acceptance command failed or refused (--live / git push)
 
 # ---------------------------------------------------------------- paths
-$Root        = Split-Path -Parent $MyInvocation.MyCommand.Path
-$PolicyPath  = Join-Path $Root 'policy.json'
-$WorkingDir  = Join-Path $Root 'working'
-$StatePath   = Join-Path $WorkingDir 'state.json'
-$LogDir      = Join-Path $WorkingDir 'logs'
-$AgyExe      = Join-Path $env:LOCALAPPDATA 'agy\bin\agy.exe'
+$Root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$PolicyPath = Join-Path $Root 'policy.json'
+$WorkingDir = Join-Path $Root 'working'
+$StatePath = Join-Path $WorkingDir 'state.json'
+$LogDir = Join-Path $WorkingDir 'logs'
+$AgyExe = Join-Path $env:LOCALAPPDATA 'agy\bin\agy.exe'
 
 # Stall watchdog (24/09/26): kills a run that stops making progress. See watchdog.ps1.
 . (Join-Path $Root 'watchdog.ps1')
@@ -75,13 +77,13 @@ foreach ($d in @($WorkingDir, $LogDir)) {
 
 $StartedUtc = (Get-Date).ToUniversalTime()
 # 13/10/26: + process id, so two runs started in the same second no longer collide on one log file
-$Stamp      = '{0}-{1}' -f $StartedUtc.ToString('yyyyMMddTHHmmssZ'), $PID
-$Stopwatch  = [Diagnostics.Stopwatch]::StartNew()
+$Stamp = '{0}-{1}' -f $StartedUtc.ToString('yyyyMMddTHHmmssZ'), $PID
+$Stopwatch = [Diagnostics.Stopwatch]::StartNew()
 
-$script:LogPath      = Join-Path $LogDir ("{0}-{1}-init.log" -f $Stamp, $Role)
+$script:LogPath = Join-Path $LogDir ("{0}-{1}-init.log" -f $Stamp, $Role)
 $script:ResponsePath = ''
-$script:Attempts     = @()
-$script:LogsPruned   = 0
+$script:Attempts = @()
+$script:LogsPruned = 0
 
 function Write-Log {
     param([string]$Message)
@@ -93,7 +95,7 @@ function Write-Log {
 function Emit-AndExit {
     param(
         [string]$ModelUsed = '',
-        [string]$Pool      = '',
+        [string]$Pool = '',
         [string]$Reason,
         [int]$Code
     )
@@ -151,7 +153,8 @@ if (-not (Test-Path $PolicyPath)) {
 }
 try {
     $Policy = Get-Content $PolicyPath -Raw | ConvertFrom-Json
-} catch {
+}
+catch {
     Emit-AndExit -Reason "policy.json is not valid JSON: $($_.Exception.Message)" -Code $EXIT_POLICY
 }
 foreach ($req in @('roles', 'thresholds', 'health_probe', 'quota_signals')) {
@@ -195,14 +198,14 @@ function Read-State {
         }
     }
     return [pscustomobject]@{
-        schema             = 1
-        quota              = [pscustomobject]@{ P2 = $null; P3 = $null; observed_utc = $null }
-        current_model      = [pscustomobject]@{}
-        consecutive_fails  = [pscustomobject]@{}
-        last_decision      = ''
-        blacklist          = @()
-        p3_calls           = @()
-        last_probe_ok_utc  = $null
+        schema            = 1
+        quota             = [pscustomobject]@{ P2 = $null; P3 = $null; observed_utc = $null }
+        current_model     = [pscustomobject]@{}
+        consecutive_fails = [pscustomobject]@{}
+        last_decision     = ''
+        blacklist         = @()
+        p3_calls          = @()
+        last_probe_ok_utc = $null
     }
 }
 function Save-State($s) {
@@ -225,14 +228,15 @@ $State.blacklist = $activeBl
 
 # P3 budget window
 $p3Window = [double](Get-Prop $Policy.thresholds 'p3_window_hours' 5)
-$p3Max    = [int](Get-Prop $Policy.thresholds 'p3_max_calls_per_window' 3)
+$p3Max = [int](Get-Prop $Policy.thresholds 'p3_max_calls_per_window' 3)
 $p3Recent = @()
 foreach ($c in @(Get-Prop $State 'p3_calls' @())) {
     if ($null -eq $c) { continue }
     try {
         $t = [datetime]::Parse($c, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::RoundtripKind)
         if ($t -gt $NowUtc.AddHours(-$p3Window)) { $p3Recent += $c }
-    } catch { }
+    }
+    catch { }
 }
 $State.p3_calls = $p3Recent
 $P3Spent = @($p3Recent).Count
@@ -254,7 +258,7 @@ function Invoke-LogPruning {
     }
 
     $retentionDays = [int](Get-Prop $LoggingCfg 'retention_days' 14)
-    $maxFiles      = [int](Get-Prop $LoggingCfg 'max_files' 200)
+    $maxFiles = [int](Get-Prop $LoggingCfg 'max_files' 200)
 
     if (-not (Test-Path $LogDir)) { return }
 
@@ -274,7 +278,8 @@ function Invoke-LogPruning {
                 try {
                     Remove-Item -Path $f.FullName -Force -ErrorAction Stop
                     $prunedCount++
-                } catch {
+                }
+                catch {
                     Write-Log "Pruning error removing $($f.Name): $($_.Exception.Message)"
                 }
             }
@@ -293,7 +298,8 @@ function Invoke-LogPruning {
                 try {
                     Remove-Item -Path $remaining[$i].FullName -Force -ErrorAction Stop
                     $prunedCount++
-                } catch {
+                }
+                catch {
                     Write-Log "Pruning error removing $($remaining[$i].Name): $($_.Exception.Message)"
                 }
             }
@@ -303,7 +309,8 @@ function Invoke-LogPruning {
         if ($prunedCount -gt 0) {
             Write-Log "Log pruning complete: $prunedCount files removed (retention=${retentionDays}d, maxFiles=$maxFiles)."
         }
-    } catch {
+    }
+    catch {
         Write-Log "Log pruning encountered a non-fatal error: $($_.Exception.Message)"
     }
 }
@@ -321,11 +328,12 @@ function Test-McpConfigStatic {
     }
     try {
         $cfg = Get-Content $cfgPath -Raw | ConvertFrom-Json
-    } catch {
+    }
+    catch {
         return "mcp_config.json is unparseable: $($_.Exception.Message)"
     }
     if (-not ($cfg.PSObject.Properties.Name -contains 'mcpServers')) { return $null }
-    $deny  = @(Get-Prop $hp 'mcp_denylist_servers' @())
+    $deny = @(Get-Prop $hp 'mcp_denylist_servers' @())
     $denyC = @(Get-Prop $hp 'mcp_denylist_command_substrings' @())
     foreach ($srv in $cfg.mcpServers.PSObject.Properties) {
         if ($deny -contains $srv.Name) {
@@ -337,14 +345,56 @@ function Test-McpConfigStatic {
             $c = Get-Prop $srv.Value 'command' ''
             $a = @(Get-Prop $srv.Value 'args' @())
             $cmdText = ("{0} {1}" -f $c, ($a -join ' '))
-        } catch { }
+        }
+        catch { }
         foreach ($sub in $denyC) {
             if ($cmdText -and $cmdText.ToLower().Contains($sub.ToLower())) {
                 return "mcp_config.json server '$($srv.Name)' uses '$sub', the remote-proxy pattern that hangs agy initialisation (A13). Remove or fix it."
             }
         }
+        $isDisabled = [bool](Get-Prop $srv.Value 'disabled' $false)
+        if (-not $isDisabled -and $srv.Name -eq 'chrome-devtools-mcp' -and $cmdText -match '--autoConnect') {
+            Write-Log "MCP advisory: 'chrome-devtools-mcp' is active with '--autoConnect'; cold starts under CLI may add 20-86s."
+        }
     }
     return $null
+}
+
+function Test-AcceptanceCommandSafe {
+    param([string[]]$Commands)
+    foreach ($cmd in @($Commands)) {
+        if (-not $cmd -or -not $cmd.Trim()) { continue }
+        if ($cmd -match '(?i)(?:^|\s)--live(?:\s|$)|--publish-live|\bgit\s+push\b|\bpublish\.py\s+.*--main\b') {
+            return "refused unsafe acceptance command (matches live/push guard): $cmd"
+        }
+    }
+    return $null
+}
+
+function Invoke-AcceptanceBlock {
+    param([string[]]$Commands, [string]$Dir)
+    $cmds = @($Commands | Where-Object { $_ -and $_.Trim() })
+    if ($cmds.Count -eq 0) { return @{ ok = $true; failed_cmd = ''; exit_code = 0 } }
+    Push-Location $Dir
+    try {
+        foreach ($cmd in $cmds) {
+            Write-Log "ACCEPTANCE run: $cmd"
+            $eap = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
+            $out = & powershell -NoProfile -Command $cmd 2>&1
+            $code = $LASTEXITCODE
+            $ErrorActionPreference = $eap
+            foreach ($line in @($out)) { if ($null -ne $line) { Write-Log "  [acc] $line" } }
+            if ($code -ne 0) {
+                Write-Log "ACCEPTANCE FAILED (exit $code): $cmd"
+                return @{ ok = $false; failed_cmd = $cmd; exit_code = $code }
+            }
+        }
+    }
+    finally {
+        Pop-Location
+    }
+    return @{ ok = $true; failed_cmd = ''; exit_code = 0 }
 }
 
 # ---------------------------------------------------------------- agy invocation
@@ -357,7 +407,9 @@ function Invoke-Agy {
         [bool]$SkipPermissions,
         [string]$AgyLogFile,
         [switch]$NoAddDir,
-        [int]$NoProgressSec = 0
+        [string]$WatchDir = '',
+        [int]$DeadAfterSec = 0,
+        [int]$MaxRunSec = 0
     )
     if (-not (Test-Path $AgyExe)) {
         return @{ exit_code = -1; stdout = ''; stderr = "agy.exe not found at $AgyExe"; timed_out = $false; signal = 'error' }
@@ -382,26 +434,30 @@ function Invoke-Agy {
     $code = -1
     try {
         $p = Start-Process -FilePath $AgyExe -ArgumentList $argString -NoNewWindow -PassThru `
-             -RedirectStandardOutput $o -RedirectStandardError $e
+            -RedirectStandardOutput $o -RedirectStandardError $e
         $null = $p.Handle    # A14: required or ExitCode is empty after exit
         # agy's --print-timeout should fire first; the watchdog is the backstop for that AND
         # kills a run that stalls long before it (24/09/26: two runs sat 15+ min doing nothing).
         $wd = Get-Prop $Policy 'watchdog' $null
+        $effDead = if ($DeadAfterSec -gt 0) { $DeadAfterSec } else { [int](Get-Prop $wd 'dead_after_sec' 600) }
+        $effMax = if ($MaxRunSec -gt 0) { $MaxRunSec } else { [int](Get-Prop $wd 'max_run_sec' 14400) }
         $w = Wait-ProcessWithWatchdog -Process $p -TotalTimeoutSec ($PrintTimeoutSec + 30) `
-                -LogFile $AgyLogFile -WorkDir ($(if ($ProgressDir) { $ProgressDir } else { $WorkDir })) -NoProgressSec $NoProgressSec `
-                -LogIdleSec ([int](Get-Prop $wd 'log_idle_sec' 300)) `
-                -ChildMaxSec ([int](Get-Prop $wd 'child_max_sec' 900)) `
-                -PollSec ([int](Get-Prop $wd 'poll_sec' 30)) `
-                -Log { param($m) Write-Log $m }
+            -MaxRunSec $effMax -DeadAfterSec $effDead `
+            -LogFile $AgyLogFile -WorkDir $WatchDir -ProgressDir $ProgressDir `
+            -PollSec ([int](Get-Prop $wd 'poll_sec' 30)) `
+            -Log { param($m) Write-Log $m }
         if ($w.outcome -eq 'exited') {
             $code = $p.ExitCode
-        } elseif ($w.outcome -eq 'timeout') {
+        }
+        elseif ($w.outcome -eq 'timeout') {
             $timedOut = $true
-        } else {
+        }
+        else {
             $stalledReason = $w.reason
             Write-Log "  STALLED: $stalledReason - process tree killed"
         }
-    } catch {
+    }
+    catch {
         Remove-Item $o, $e -ErrorAction SilentlyContinue
         return @{ exit_code = -1; stdout = ''; stderr = "launch failed: $($_.Exception.Message)"; timed_out = $false; signal = 'error' }
     }
@@ -423,14 +479,15 @@ function Invoke-Agy {
             $agyLogText = Get-Content $AgyLogFile -Raw -ErrorAction Stop
             if ($agyLogText) {
                 $m = [regex]::Match($agyLogText, 'soft-denying tool confirmation "([^"]+)"')
-                if ($m.Success)                        { $deniedTool = $m.Groups[1].Value }
+                if ($m.Success) { $deniedTool = $m.Groups[1].Value }
                 elseif ($agyLogText -match 'approved=false') { $deniedTool = 'unknown' }
             }
-        } catch { }
+        }
+        catch { }
     }
 
     # ---- signal classification (D3, fail-closed) --------------------------------
-    $qs   = $Policy.quota_signals
+    $qs = $Policy.quota_signals
     $both = "$out`n$err"
     $signal = 'none'
 
@@ -462,12 +519,15 @@ function Invoke-Agy {
         $marker = Get-Prop $qs 'denied_no_output_marker' 'no output produced'
         if ($err -and $err.Contains($marker)) {
             $signal = 'denied'
-        } elseif ($deniedTool) {
+        }
+        elseif ($deniedTool) {
             # truncated mid-run by a denied tool - output exists but the work did not finish
             $signal = 'denied'
-        } elseif (-not $out -or $out.Trim().Length -eq 0) {
+        }
+        elseif (-not $out -or $out.Trim().Length -eq 0) {
             $signal = 'empty'
-        } else {
+        }
+        else {
             # a quota signal can still ride along on a zero exit
             foreach ($pat in @(Get-Prop $qs 'exhaustion_patterns' @())) {
                 if ($both -cmatch [regex]::Escape($pat)) { $signal = 'quota'; break }
@@ -510,21 +570,21 @@ function Get-Prompt {
     switch ($ForRole) {
         'verifier' {
             return ($ReadRulesFirst + "You are an independent VERIFIER. Read the task specification at {0}. " +
-                    "Inspect the work in {1} and check it against that spec's acceptance criteria. " +
-                    "Reply with PASS or FAIL on the first line, then the evidence you checked. " +
-                    "Do NOT fix, edit, or create anything - report only.") -f $Spec, $WorkDir
+                "Inspect the work in {1} and check it against that spec's acceptance criteria. " +
+                "Reply with PASS or FAIL on the first line, then the evidence you checked. " +
+                "Do NOT fix, edit, or create anything - report only.") -f $Spec, $WorkDir
         }
         'scout' {
             return ($ReadRulesFirst + "You are a SCOUT. Read the task specification at {0}. " +
-                    "Search {1} and report only what you find - file paths, matches, and a short summary. " +
-                    "Do NOT modify anything.") -f $Spec, $WorkDir
+                "Search {1} and report only what you find - file paths, matches, and a short summary. " +
+                "Do NOT modify anything.") -f $Spec, $WorkDir
         }
         default {
             return ($ReadRulesFirst + "Then read the task specification at {0} and execute it fully in the workspace at {1}. " +
-                    "The spec is authoritative; follow it exactly and do not ask clarifying questions. " +
-                    "Write the deliverable files early so progress is visible on disk. While working, run only the tests the spec names; " +
-                    "run the repo-wide preflight at most once, at the end, never as a baseline before you start. " +
-                    "When finished, summarise what you changed.") -f $Spec, $WorkDir
+                "The spec is authoritative; follow it exactly and do not ask clarifying questions. " +
+                "Write the deliverable files early so progress is visible on disk. While working, run only the tests the spec names; " +
+                "run the repo-wide preflight at most once, at the end, never as a baseline before you start. " +
+                "When finished, summarise what you changed.") -f $Spec, $WorkDir
         }
     }
 }
@@ -550,7 +610,7 @@ function Test-Blacklisted($poolId, $modelId) {
 # so every other role is banned. A hardcoded role list here would contradict the policy file,
 # which DoD item 8 forbids.
 $OpusAllowed = @(Get-Prop $Policy 'opus_roles' @('architect'))
-$OpusBanned  = @($Policy.roles.PSObject.Properties.Name | Where-Object { $OpusAllowed -notcontains $_ })
+$OpusBanned = @($Policy.roles.PSObject.Properties.Name | Where-Object { $OpusAllowed -notcontains $_ })
 
 function Resolve-Candidates {
     $out = @()
@@ -588,7 +648,7 @@ function Resolve-Candidates {
 $Candidates = Resolve-Candidates
 foreach ($c in $Candidates) {
     if ($c.SkipReason) { Write-Log "  candidate $($c.Order): $($c.Model) [$($c.Pool)] SKIPPED - $($c.SkipReason)" }
-    else               { Write-Log "  candidate $($c.Order): $($c.Model) [$($c.Pool)] eligible" }
+    else { Write-Log "  candidate $($c.Order): $($c.Model) [$($c.Pool)] eligible" }
 }
 
 # explicit -Model override bypasses policy AND the P3 budget - and must say so (5.2)
@@ -615,11 +675,12 @@ if ($Role -eq 'verifier' -and [bool](Get-Prop $Policy 'verifier_must_differ_from
     $lastExecPool = Get-Prop $State 'last_executor_pool' ''
     if ($lastExecPool -and $Eligible.Count -gt 0) {
         $differing = @($Eligible | Where-Object { $_.Pool -ne $lastExecPool })
-        $same      = @($Eligible | Where-Object { $_.Pool -eq $lastExecPool })
+        $same = @($Eligible | Where-Object { $_.Pool -eq $lastExecPool })
         if ($differing.Count -gt 0) {
             $Eligible = @($differing + $same)
             $CrossFamilyNote = " (cross-family: preferred a pool other than the executor's '$lastExecPool')"
-        } else {
+        }
+        else {
             $CrossFamilyNote = " (WARNING: verifier_must_differ_from_executor could not be honoured - every remaining candidate shares the executor's pool '$lastExecPool')"
         }
         Write-Log "cross-family check: last executor pool='$lastExecPool'$CrossFamilyNote"
@@ -634,7 +695,7 @@ if ($Eligible.Count -eq 0) {
     Emit-AndExit -Reason "$why - and this role has no local fallback (a drained verifier reports and stops)" -Code $EXIT_EXHAUSTED
 }
 
-$First  = $Eligible[0]
+$First = $Eligible[0]
 $Reason = "policy: first eligible candidate for '$Role'$CrossFamilyNote"
 if ($Overridden) { $Reason = "-Model override (bypassed policy order and P3 budget)" }
 elseif ($First.Order -gt 1) {
@@ -642,12 +703,19 @@ elseif ($First.Order -gt 1) {
     # order yet be passed over by the cross-family reorder, which is not the same thing -
     # reporting it as "unavailable" with a blank cause would be a lie in the machine contract.
     $skippedList = @($Candidates | Where-Object { $_.Order -lt $First.Order -and $_.SkipReason } |
-                     ForEach-Object { "$($_.Model)=$($_.SkipReason)" })
+        ForEach-Object { "$($_.Model)=$($_.SkipReason)" })
     if ($skippedList.Count -gt 0) {
         $Reason = "fell back to candidate $($First.Order) ($($First.Model)); earlier rungs unavailable: $($skippedList -join '; ')$CrossFamilyNote"
-    } else {
+    }
+    else {
         $Reason = "chose candidate $($First.Order) ($($First.Model)) over earlier rungs$CrossFamilyNote"
     }
+}
+
+# Check acceptance command block BEFORE dry run or any work
+$accGuard = Test-AcceptanceCommandSafe -Commands $AcceptanceCmd
+if ($accGuard) {
+    Emit-AndExit -Reason $accGuard -Code $EXIT_ACCEPTANCE
 }
 
 # ---------------------------------------------------------------- dry run (5.4 item 3)
@@ -659,7 +727,7 @@ if ((-not $DryRun) -and [bool](Get-Prop $Policy 'dry_run_default' $false)) {
 }
 if ($DryRun) {
     Emit-AndExit -ModelUsed $First.Model -Pool $(if ($First.Pool -eq 'P3') { 'claude' } else { 'gemini' }) `
-                 -Reason "DRY RUN - no agy call made. $Reason" -Code $EXIT_OK
+        -Reason "DRY RUN - no agy call made. $Reason" -Code $EXIT_OK
 }
 
 # ---------------------------------------------------------------- D1 tier 1 (static, free)
@@ -682,22 +750,29 @@ if ($lastOk) {
             $needProbe = $false
             Write-Log "Live probe skipped: last success $lastOk is inside the ${ttlMin}min TTL. Costs no quota."
         }
-    } catch { }
+    }
+    catch { }
 }
 if ($needProbe) {
     $probeModel = Get-Prop $hp 'model' 'gemini-3.6-flash-low'
-    $probeTo    = [int](Get-Prop $hp 'timeout_sec' 20)
+    $probeTo = [int](Get-Prop $hp 'timeout_sec' 120)
     $probeTries = [int](Get-Prop $hp 'retries' 1)
     $probeOk = $false
+    $probeLog = Join-Path $LogDir ("{0}-probe-agy.log" -f $Stamp)
     for ($try = 0; $try -le $probeTries; $try++) {
         Write-Log "Live MCP probe (attempt $($try + 1)) on $probeModel, ${probeTo}s"
         $pr = Invoke-Agy -Prompt (Get-Prop $hp 'prompt' 'Reply with exactly the two characters OK and nothing else.') `
-                         -ModelId $probeModel -PrintTimeoutSec $probeTo -SkipPermissions $false -AgyLogFile '' -NoAddDir
-        if ($pr.signal -eq 'none') { $probeOk = $true; break }
-        Write-Log "  probe attempt failed: signal=$($pr.signal) exit=$($pr.exit_code) stderr=$($pr.stderr)"
+            -ModelId $probeModel -PrintTimeoutSec $probeTo -SkipPermissions $false -AgyLogFile $probeLog `
+            -DeadAfterSec $probeTo -MaxRunSec ($probeTo + 30) -NoAddDir
+        if ($pr.signal -eq 'none') {
+            $probeOk = $true
+            Remove-Item $probeLog -ErrorAction SilentlyContinue
+            break
+        }
+        Write-Log "  probe attempt failed: signal=$($pr.signal) exit=$($pr.exit_code) stderr=$($pr.stderr) log=$probeLog"
     }
     if (-not $probeOk) {
-        Emit-AndExit -Reason "pre-flight MCP health probe failed - agy is not answering. Aborting before burning the run timeout." -Code $EXIT_AGY_ERROR
+        Emit-AndExit -Reason "pre-flight MCP health probe failed - agy is not answering (see $probeLog). Aborting before burning the run timeout." -Code $EXIT_AGY_ERROR
     }
     $State.last_probe_ok_utc = $NowUtc.ToString('yyyy-MM-ddTHH:mm:ssZ')
     Write-Log "Live probe OK."
@@ -721,7 +796,8 @@ function Get-WorkspaceFingerprint {
         $porcelain = & git -C $WorkDir status --porcelain 2>$null
         if ($LASTEXITCODE -ne 0) { return $null }   # not a git worktree - no cheap fingerprint
         return (($porcelain | Out-String).Trim())
-    } catch { return $null }
+    }
+    catch { return $null }
 }
 
 $PreRunFingerprint = $null
@@ -729,7 +805,8 @@ if (-not $skipPerms) {
     $PreRunFingerprint = Get-WorkspaceFingerprint
     if ($null -eq $PreRunFingerprint) {
         Write-Log "containment: '$WorkDir' is not a git worktree, so no before/after fingerprint is possible. A write by this read-only role would NOT be detected."
-    } else {
+    }
+    else {
         Write-Log "containment: workspace fingerprint captured for read-only role '$Role'."
     }
 }
@@ -742,7 +819,7 @@ $maxAttempts = 2
 $attemptNo = 0
 $idx = 0
 $finalModel = ''
-$finalPool  = ''
+$finalPool = ''
 
 while ($attemptNo -lt $maxAttempts -and $idx -lt $Eligible.Count) {
     $cand = $Eligible[$idx]
@@ -753,10 +830,13 @@ while ($attemptNo -lt $maxAttempts -and $idx -lt $Eligible.Count) {
     Write-Log "ATTEMPT $attemptNo -> $($cand.Model) [$($cand.Pool)]"
     $agyLog = Join-Path $LogDir ("{0}-{1}-{2}-agy.log" -f $Stamp, $Role, $cand.Model)
 
-    $noProgress = 0
-    if ($Role -eq 'executor') { $noProgress = [int](Get-Prop (Get-Prop $Policy 'watchdog' $null) 'executor_no_progress_sec' 900) }
+    $wdCfg = Get-Prop $Policy 'watchdog' $null
+    $deadSec = [int](Get-Prop $wdCfg 'dead_after_sec' 600)
+    $maxSec = [int](Get-Prop $wdCfg 'max_run_sec' 14400)
+    $watchTarget = if ($Role -eq 'executor') { if ($ProgressDir) { $ProgressDir } else { $WorkDir } } else { '' }
     $r = Invoke-Agy -Prompt $prompt -ModelId $cand.Model -PrintTimeoutSec $TimeoutSec `
-                    -SkipPermissions $skipPerms -AgyLogFile $agyLog -NoProgressSec $noProgress
+        -SkipPermissions $skipPerms -AgyLogFile $agyLog -WatchDir $watchTarget `
+        -DeadAfterSec $deadSec -MaxRunSec $maxSec
 
     $script:Attempts += [ordered]@{ model = $cand.Model; exit_code = $r.exit_code; signal = $r.signal }
 
@@ -805,6 +885,13 @@ while ($attemptNo -lt $maxAttempts -and $idx -lt $Eligible.Count) {
                 Write-Log "verifier verdict: $verdict"
             }
 
+            $accRes = Invoke-AcceptanceBlock -Commands $AcceptanceCmd -Dir $WorkDir
+            if (-not $accRes.ok) {
+                $State.last_decision = "acceptance failed (exit $($accRes.exit_code)): $($accRes.failed_cmd)"
+                Save-State $State
+                Emit-AndExit -ModelUsed $cand.Model -Pool $poolName -Reason "acceptance command failed (exit $($accRes.exit_code)): $($accRes.failed_cmd)" -Code $EXIT_ACCEPTANCE
+            }
+
             $finalModel = $cand.Model; $finalPool = $poolName
             $State.last_decision = $Reason
             # feeds verifier_must_differ_from_executor on the next verifier run
@@ -822,10 +909,10 @@ while ($attemptNo -lt $maxAttempts -and $idx -lt $Eligible.Count) {
             # 51h worst case, which blocked a model for two days over a 27-minute window.
             $resetH = Get-QuotaResetHours -Text "$($r.stderr) $($r.stdout)" -Default $resetH
             $State.blacklist = @($State.blacklist) + @([pscustomobject]@{
-                model = $cand.Model; pool = $cand.Pool
-                expires_utc = $NowUtc.AddHours($resetH).ToString('yyyy-MM-ddTHH:mm:ssZ')
-                reason = 'quota exhaustion signal observed'
-            })
+                    model = $cand.Model; pool = $cand.Pool
+                    expires_utc = $NowUtc.AddHours($resetH).ToString('yyyy-MM-ddTHH:mm:ssZ')
+                    reason = 'quota exhaustion signal observed'
+                })
             Write-Log "  quota signal -> blacklisted $($cand.Model) until +${resetH}h; retrying the next candidate once."
             $Reason = "quota exhaustion on $($cand.Model); retried next candidate once"
             $idx++
