@@ -8,6 +8,12 @@ Full body: `.agents/MODEL-ROUTING.md` § 0.
 
 ## Documentation architecture doctrine
 Every fact has exactly one owner. Any other file that needs it links `path#section` in one line.
+**Amending documentation (any agent, any platform).** Feedback from the owner corrects what is already written; it is never new text to add, and finding where it belongs is the agent's job. Documentation means every file that instructs an agent: universal skills, client-specific skills, tool-specific skill folders, `AGENTS.md` and `.agents/`, workflow and engine docs, specs, agent definitions and memory.
+1. **Regain full context first.** Read all of that documentation in full before changing a word, so the parts that govern the issue are known, wherever they sit.
+2. **Amend in place.** Rewrite each governing passage so it states the rule as it now stands. No new paragraph beside the old one, no dated addendum, no "replaces the X rule" note. Only a fact with no existing home gets a new line, at its owner. History is git's job.
+3. **Check pass before reporting done.** Re-read the whole documentation and remove every duplicate, contradiction or line that could confuse an agent, so one version stands at one owner.
+
+Documentation must stay streamlined: a change that only makes it longer is a defect.
 
 | Layer | Holds | Never holds |
 |---|---|---|
