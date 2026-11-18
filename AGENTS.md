@@ -34,6 +34,7 @@ Documentation must stay streamlined: a change that only makes it longer is a def
    - Interactive Prototypes: `prototypes/home-hero.html`, `prototypes/studio-black.html`, and visual mockup assets.
    - Brand Dossier & Research: `tuzee_tattoo_brand_research_digital_strategy_dossier.md`, `BRAINSTORM.md`, `COMPETITORS.md`.
 3. **State and Governance** (`.agents/`):
+   - `.agents/MODEL-ROUTING.md`: model routing rules.
    - `.agents/WSP.md`: live status, update before every push.
    - `.agents/memory.md`: root causes and fixes, consult before debugging.
 4. **Production Site**:
